@@ -151,19 +151,17 @@
         function processPayment() {
             let currency = document.getElementById('currency').value;
             let amount = document.getElementById('amount').value;
+            let comment = document.getElementById('comment').value || 'no_comment';
             
             if (!amount || amount <= 0) {
                 alert('Будь ласка, вкажіть суму!');
                 return;
             }
 
-            let botUrl = `https://t.me/iCryptoCheck_bot?start=pay_${amount}_${currency}`;
+            // Передаємо дані через параметр start у форматі: pay_сума_валюта_коментар
+            let botUrl = `https://t.me/iCryptoCheck_bot?start=pay_${amount}_${currency}_${encodeURIComponent(comment)}`;
             
-            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                window.open(botUrl, '_blank');
-            } else {
-                window.location.href = botUrl;
-            }
+            window.open(botUrl, '_blank');
         }
 
         function copyWallet() {
