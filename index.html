@@ -20,50 +20,51 @@
         }
         .container {
             background-color: #1f2937;
-            padding: 25px;
+            padding: 22px;
             border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
             width: 100%;
             max-width: 420px;
             text-align: center;
+            box-sizing: border-box;
         }
         h1 {
-            font-size: 22px;
-            margin-bottom: 8px;
+            font-size: 20px;
+            margin-bottom: 6px;
             color: #38bdf8;
         }
         p {
-            font-size: 14px;
+            font-size: 13px;
             color: #9ca3af;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         .input-group {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             text-align: left;
         }
         label {
-            font-size: 12px;
+            font-size: 11px;
             color: #93c5fd;
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
         input, select {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
             border: 1px solid #374151;
             background-color: #111827;
             color: white;
-            font-size: 15px;
+            font-size: 14px;
             box-sizing: border-box;
         }
         .btn {
             background-color: #2563eb;
             color: white;
             border: none;
-            border-radius: 10px;
-            padding: 14px;
-            font-size: 16px;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 15px;
             font-weight: bold;
             width: 100%;
             cursor: pointer;
@@ -73,19 +74,53 @@
         .btn:hover {
             background-color: #1d4ed8;
         }
+        .wallet-box {
+            background-color: #111827;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border: 1px dashed #374151;
+            text-align: left;
+        }
+        .wallet-title {
+            font-size: 11px;
+            color: #38bdf8;
+            margin-bottom: 4px;
+            font-weight: bold;
+        }
+        .wallet-address {
+            font-size: 11px;
+            color: #e2e8f0;
+            word-break: break-all;
+            font-family: monospace;
+            margin-bottom: 8px;
+        }
+        .btn-copy {
+            background-color: #334155;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 12px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .btn-copy:hover {
+            background-color: #475569;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h1>iCrypto Оплата</h1>
-        <p>Оберіть валюту та вкажіть суму внеску</p>
+        <p>Оберіть валюту та зробіть внесок</p>
         
         <div class="input-group">
             <label for="currency">Виберіть валюту:</label>
             <select id="currency">
+                <option value="UA">UA</option>
                 <option value="TON">TON</option>
-                <option value="UA">UA Token</option>
                 <option value="USDT">USDT</option>
             </select>
         </div>
@@ -100,7 +135,13 @@
             <input type="text" id="comment" placeholder="Від кого донат...">
         </div>
         
-        <button class="btn" onclick="processPayment()">Продовжити оплату</button>
+        <button class="btn" onclick="processPayment()">Перейти в бот для оплати</button>
+
+        <div class="wallet-box">
+            <div class="wallet-title">Реквізити гаманця для переказу:</div>
+            <div class="wallet-address" id="walletText">UQAdEHyAnFO03w9bKLyA1JbezY2lsyHMhPod-7kOM_x5Fqyi</div>
+            <button class="btn-copy" onclick="copyWallet()">Скопіювати гаманець</button>
+        </div>
     </div>
 
     <script>
@@ -110,22 +151,26 @@
         function processPayment() {
             let currency = document.getElementById('currency').value;
             let amount = document.getElementById('amount').value;
-            let comment = document.getElementById('comment').value;
             
             if (!amount || amount <= 0) {
                 alert('Будь ласка, вкажіть суму!');
                 return;
             }
 
-            // Формуємо перехід у бота з готовими даними (замініть ім'я вашого бота, якщо потрібно)
             let botUrl = `https://t.me/iCryptoCheck_bot?start=pay_${amount}_${currency}`;
             
-            // Відкриваємо бота через Telegram Web App або напряму
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 window.open(botUrl, '_blank');
             } else {
                 window.location.href = botUrl;
             }
+        }
+
+        function copyWallet() {
+            let walletText = document.getElementById('walletText').innerText;
+            navigator.clipboard.writeText(walletText).then(() => {
+                alert('Гаманець скопійовано в буфер обміну!');
+            });
         }
     </script>
 
