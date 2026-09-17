@@ -135,7 +135,7 @@
             <input type="text" id="comment" placeholder="Від кого донат...">
         </div>
         
-        <button class="btn" onclick="sendDataToBot()">Надіслати дані в бот</button>
+        <button class="btn" onclick="submitForm()">Сформувати платіж</button>
 
         <div class="wallet-box">
             <div class="wallet-title">Реквізити гаманця для переказу:</div>
@@ -148,7 +148,7 @@
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        function sendDataToBot() {
+        function submitForm() {
             let currency = document.getElementById('currency').value;
             let amount = document.getElementById('amount').value;
             let comment = document.getElementById('comment').value || 'Без коментаря';
@@ -158,21 +158,14 @@
                 return;
             }
 
-            // Формуємо текстовий пакет даних для бота
-            let dataString = `PAY|${amount}|${currency}|${comment}`;
-
-            if (tg && tg.sendData) {
-                // Передаємо дані прямо в бот і закриваємо Web App
-                tg.sendData(dataString);
-            } else {
-                alert('Відкрийте цю сторінку всередині Telegram-бота!');
-            }
+            // Показуємо користувачу чітке вікно з підтвердженням і реквізитами
+            alert(`Сума: ${amount} ${currency}\nКоментар: ${comment}\n\nСкопіюйте гаманець нижче та здійсніть переказ.`);
         }
 
         function copyWallet() {
             let walletText = document.getElementById('walletText').innerText;
             navigator.clipboard.writeText(walletText).then(() => {
-                alert('Гаманець скопійовано в буфер обміну!');
+                alert('Гаманець успішно скопійовано!');
             });
         }
     </script>
