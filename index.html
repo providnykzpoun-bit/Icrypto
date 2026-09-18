@@ -64,21 +64,6 @@
             font-weight: bold;
         }
 
-        /* Контейнер для кнопки кошелька в шапке */
-        #ton-connect-button {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
-
-        /* Контейнер для кнопки кошелька на стартовом окне */
-        #ton-connect-start-button {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin-bottom: 12px;
-        }
-
         .center-stage {
             position: absolute;
             top: 38%;
@@ -258,7 +243,8 @@
                 <div class="stat-item">Брил: <span id="diamonds">0</span>/10</div>
             </div>
         </div>
-        <div id="ton-connect-button"></div>
+        <!-- Кнопка гаманця у шапці гри -->
+        <button class="btn btn-ton" style="padding: 6px 12px; font-size: 13px; margin: 0; width: auto;" onclick="openWalletModal()">💳 Кошелек</button>
     </header>
 
     <div class="center-stage">
@@ -275,14 +261,13 @@
         <div class="spin-cost">Стоимость прокрута: 10 Царей</div>
     </div>
 
-    <!-- Стартове вікно -->
+    <!-- Стартове вікно із власною надійною кнопкою гаманця -->
     <div id="start-modal" class="modal">
         <h2>👑 Добро пожаловать, Царь!</h2>
         <p>Вам начислено <b>50 Царей</b>.<br>Каждый прокрут стоит <b>10 Царей</b>.<br>💎 <b>Бриллиант</b> = +30 Царей.<br><br>Соберите 10 бриллиантов для победы!</p>
         
-        <!-- Официальная кнопка TonConnect рендерится сюда -->
-        <div id="ton-connect-start-button"></div><br>
-
+        <!-- Надійна кнопка підключення гаманця на старті -->
+        <button class="btn btn-ton" onclick="openWalletModal()">🔗 Подключить кошелек</button><br>
         <button class="btn" onclick="startGame()">Начать правление</button>
     </div>
 
@@ -312,14 +297,22 @@
         const WIN_REWARD = 30;
         const TARGET_WALLET = "UQDXq1iAqu88tVRG62_k03kAXELu_1gzRBMye-VZoFRIRtWw";
 
-        // Инициализация TonConnect UI с привязкой к стартовой кнопке
+        // Ініціалізація TonConnect UI
         const tonConnectUI = new TonConnectUI({
             manifestUrl: 'https://providnykzpoun-bit.github.io/lcrypto/tonconnect-manifest.json',
             uiPreferences: {
                 borderRadius: 's'
-            },
-            buttonRootId: 'ton-connect-start-button'
+            }
         });
+
+        function openWalletModal() {
+            initAudio();
+            try {
+                tonConnectUI.openModal();
+            } catch (e) {
+                console.log(e);
+            }
+        }
 
         function initAudio() {
             if (!audioCtx) {
@@ -385,14 +378,6 @@
 
         function startGame() {
             initAudio();
-            
-            // Переносим кнопку кошелька из стартового окна в шапку, чтобы она осталась доступной во время игры
-            const startBtnContainer = document.getElementById('ton-connect-start-button');
-            const headerBtnContainer = document.getElementById('ton-connect-button');
-            if (startBtnContainer && startBtnContainer.children.length > 0) {
-                headerBtnContainer.appendChild(startBtnContainer.children[0]);
-            }
-
             document.getElementById('start-modal').classList.add('hidden');
             document.getElementById('gameover-modal').classList.add('hidden');
             score = 50;
@@ -502,13 +487,14 @@
         }
 
         function triggerWin() {
-            gameActive = false;
+            gameActive5 = false;
             playSound('win');
             document.getElementById('win-modal').classList.remove('hidden');
         }
 
         function triggerGameOver() {
             gameActive = false;
+            document.getElementById('gameover-modal').classList.add('hidden'); // hidden or not
             document.getElementById('gameover-modal').classList.remove('hidden');
         }
 
