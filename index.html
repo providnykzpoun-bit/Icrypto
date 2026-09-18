@@ -28,20 +28,20 @@
             justify-content: space-between;
         }
         header {
-            margin-top: 8px;
+            margin-top: 6px;
             text-align: center;
             z-index: 10;
             background: rgba(0, 0, 0, 0.9);
-            padding: 10px 14px;
+            padding: 6px 10px;
             border-radius: 12px;
             border: 2px solid #ffd700;
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
-            width: 94%;
-            max-width: 380px;
+            gap: 4px;
+            width: 96%;
+            max-width: 400px;
         }
         .header-top {
             display: flex;
@@ -51,15 +51,15 @@
         }
         h1 {
             margin: 0;
-            font-size: 16px;
+            font-size: 14px;
             text-transform: uppercase;
             letter-spacing: 1px;
             text-shadow: 2px 2px 4px #000;
         }
         .stats {
             display: flex;
-            gap: 10px;
-            font-size: 13px;
+            gap: 6px;
+            font-size: 11px;
         }
         .stat-item span {
             color: #fff;
@@ -71,12 +71,13 @@
             width: 100%;
             align-items: center;
             border-top: 1px solid rgba(255, 215, 0, 0.3);
-            padding-top: 6px;
+            padding-top: 4px;
+            gap: 4px;
         }
 
         .center-stage {
             position: absolute;
-            top: 38%;
+            top: 36%;
             left: 50%;
             transform: translate(-50%, -50%);
             display: flex;
@@ -85,7 +86,7 @@
             z-index: 5;
         }
         .crown {
-            font-size: 45px;
+            font-size: 38px;
             filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
             animation: pulseCrown 2s infinite ease-in-out;
         }
@@ -95,12 +96,12 @@
         }
 
         .wheel-box {
-            margin-top: 5px;
-            width: 105px;
-            height: 105px;
+            margin-top: 4px;
+            width: 85px;
+            height: 85px;
             border: 4px solid #ffd700;
             border-radius: 50%;
-            background: conic-gradient(#8B4513 0deg 120deg, #b8860b 120deg 240deg, #5c2d0c 240deg 360deg);
+            background: conic-gradient(#8B4513 0deg 72deg, #b8860b 72deg 144deg, #5c2d0c 144deg 216deg, #8B4513 216deg 288deg, #b8860b 288deg 360deg);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -109,58 +110,59 @@
             position: relative;
         }
         .wheel-center {
-            width: 34px;
-            height: 34px;
+            width: 26px;
+            height: 26px;
             background: #ffd700;
             border-radius: 50%;
-            border: 3px solid #3d000c;
+            border: 2px solid #3d000c;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 15px;
+            font-size: 11px;
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
         }
 
+        /* 5 бочечок в ряд */
         .barrels-container {
             position: absolute;
             bottom: 95px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 10px;
+            gap: 6px;
             z-index: 10;
         }
 
         .barrel {
-            width: 58px;
-            height: 78px;
+            width: 48px;
+            height: 66px;
             background: linear-gradient(135deg, #8B4513 0%, #5c2d0c 100%);
-            border: 3px solid #ffd700;
-            border-radius: 10px;
+            border: 2px solid #ffd700;
+            border-radius: 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.7);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.7);
             position: relative;
             transition: all 0.3s;
         }
         .barrel.selected {
-            transform: scale(1.12);
+            transform: scale(1.1);
             border-color: #fff;
-            box-shadow: 0 0 25px #ffd700;
+            box-shadow: 0 0 20px #ffd700;
         }
         .barrel-rings {
             position: absolute;
             width: 100%;
-            height: 4px;
+            height: 3px;
             background: #b8860b;
             box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
         }
-        .ring-top { top: 9px; }
-        .ring-bottom { bottom: 9px; }
+        .ring-top { top: 7px; }
+        .ring-bottom { bottom: 7px; }
         .barrel-content {
-            font-size: 22px;
+            font-size: 18px;
             font-weight: bold;
             color: #ffd700;
             text-shadow: 2px 2px 2px #000;
@@ -169,7 +171,7 @@
 
         .spin-btn-container {
             position: absolute;
-            bottom: 15px;
+            bottom: 12px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 15;
@@ -177,9 +179,9 @@
             width: 90%;
         }
         .spin-cost {
-            font-size: 11px;
+            font-size: 10px;
             color: #ffcccc;
-            margin-top: 3px;
+            margin-top: 2px;
             text-shadow: 1px 1px 2px #000;
         }
 
@@ -199,13 +201,13 @@
             padding: 20px;
         }
         .modal h2 {
-            font-size: 22px;
+            font-size: 20px;
             color: #ffd700;
             margin-bottom: 10px;
             text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
         }
         .modal p {
-            font-size: 13px;
+            font-size: 12px;
             max-width: 360px;
             margin-bottom: 15px;
             line-height: 1.4;
@@ -214,14 +216,14 @@
             background: linear-gradient(135deg, #ffd700 0%, #daa520 100%);
             color: #3d000c;
             border: none;
-            padding: 10px 20px;
-            font-size: 14px;
+            padding: 9px 18px;
+            font-size: 13px;
             font-weight: bold;
             border-radius: 20px;
             cursor: pointer;
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
             transition: transform 0.2s, background 0.2s;
-            margin: 5px;
+            margin: 4px;
         }
         .btn:hover {
             transform: scale(1.05);
@@ -235,19 +237,28 @@
         .btn-ton {
             background: linear-gradient(135deg, #0098EA 0%, #0066AA 100%);
             color: #fff;
-            padding: 5px 12px;
-            font-size: 12px;
-            border-radius: 8px;
+            padding: 3px 8px;
+            font-size: 10px;
+            border-radius: 5px;
             border: none;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 0 10px rgba(0, 152, 234, 0.5);
+        }
+        .btn-exchange {
+            background: linear-gradient(135deg, #00cc66 0%, #008844 100%);
+            color: #fff;
+            padding: 3px 6px;
+            font-size: 9px;
+            border-radius: 5px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
         }
         .hidden {
             display: none !important;
         }
         #wallet-status-text {
-            font-size: 11px;
+            font-size: 9px;
             color: #ff4d4d;
         }
         #wallet-status-text.connected {
@@ -261,13 +272,15 @@
         <div class="header-top">
             <h1>Царство</h1>
             <div class="stats">
-                <div class="stat-item">Царі: <span id="score">50</span></div>
+                <div class="stat-item">Бали: <span id="points">100</span></div>
+                <div class="stat-item">Царі: <span id="score">0</span></div>
                 <div class="stat-item">Брил: <span id="diamonds">0</span>/10</div>
             </div>
         </div>
         <div class="header-bottom">
-            <span id="wallet-status-text">Гаманець не підключено</span>
-            <button class="btn-ton" onclick="openWalletModal()">🔗 Підключити гаманець</button>
+            <span id="wallet-status-text">Не підключено</span>
+            <button class="btn-exchange" onclick="exchangePointsToTsars()">🔄 Обмін</button>
+            <button class="btn-ton" onclick="openWalletModal()">💳 Гаманець</button>
         </div>
     </header>
 
@@ -281,8 +294,8 @@
     <div class="barrels-container" id="barrels-container"></div>
 
     <div class="spin-btn-container">
-        <button class="btn" id="spin-btn" onclick="spinWheel()">Крутити Колесо</button>
-        <div class="spin-cost">Вартість прокруту: 10 Царів</div>
+        <button class="btn" id="spin-btn" onclick="spinWheel()">Крутити Колесо (10 балів)</button>
+        <div class="spin-cost">5 бочок • 50% шанс на Царів</div>
     </div>
 
     <div id="win-modal" class="modal hidden">
@@ -292,17 +305,19 @@
     </div>
 
     <div id="gameover-modal" class="modal hidden">
-        <h2>⚠️ Казна порожня! ⚠️</h2>
-        <p>У вас закінчилися Царі.</p>
-        <button class="btn" onclick="resetGame()">Скинути гру</button>
+        <h2>⚠️ Бали закінчилися! ⚠️</h2>
+        <p>У вас не залишилося балів для прокрутів. Ви можете придбати 50 балів за 0.001 TON!</p>
+        <button class="btn" onclick="buyPointsWithTon()">Купити 50 балів (0.001 TON)</button>
+        <br>
+        <button class="btn" style="background: #666; color: #fff; font-size: 11px; padding: 6px 12px;" onclick="resetGame()">Почати з нуля</button>
     </div>
 
     <script>
-        // Ініціалізація Telegram Web App
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        let score = 50;
+        let points = 100;
+        let score = 0;
         let diamondsFound = 0;
         let gameActive = true;
         let currentRotation = 0;
@@ -310,24 +325,23 @@
         let barrelsData = [];
         let audioCtx = null;
 
-        const SPIN_COST = 10;
-        const WIN_REWARD = 30;
+        const SPIN_COST_POINTS = 10;
+        const WIN_REWARD_POINTS = 20;
+        const TOTAL_BARRELS = 5; // Зробили 5 бочечок замість 3
 
-        // Ініціалізація TonConnectUI
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://providnykzpoun-bit.github.io/Wallet/tonconnect-manifest.json'
         });
 
-        // Відстеження підключення гаманця
         tonConnectUI.onStatusChange(wallet => {
             const statusText = document.getElementById('wallet-status-text');
             if (wallet) {
                 const address = wallet.account.address;
                 const shortAddr = address.slice(0, 4) + '...' + address.slice(-4);
-                statusText.innerText = 'Гаманець: ' + shortAddr;
+                statusText.innerText = shortAddr;
                 statusText.classList.add('connected');
             } else {
-                statusText.innerText = 'Гаманець не підключено';
+                statusText.innerText = 'Не підключено';
                 statusText.classList.remove('connected');
             }
         });
@@ -342,6 +356,78 @@
                 }
             } catch (error) {
                 console.error("TonConnect error:", error);
+            }
+        }
+
+        async function exchangePointsToTsars() {
+            initAudio();
+            if (points < 50) {
+                alert("Потрібно щонайменше 50 балів для обміну!");
+                return;
+            }
+
+            if (!tonConnectUI.connected) {
+                alert("Будь ласка, підключіть гаманець для здійснення обміну!");
+                await tonConnectUI.openModal();
+                return;
+            }
+
+            try {
+                const transaction = {
+                    validUntil: Math.floor(Date.now() / 1000) + 360,
+                    messages: [
+                        {
+                            address: "UQ__________________________________________0v8", 
+                            amount: "1000000" // 0.001 TON
+                        }
+                    ]
+                };
+
+                await tonConnectUI.sendTransaction(transaction);
+                
+                points -= 50;
+                score += 25;
+                updateStats();
+                alert("Успішно обміняно! +25 Царів додано до казни.");
+
+            } catch (error) {
+                console.error("Transaction cancelled or failed:", error);
+                alert("Обмін скасовано або сталася помилка транзакції.");
+            }
+        }
+
+        // Функція купівлі балів за 0.001 TON, коли вони на нулі
+        async function buyPointsWithTon() {
+            initAudio();
+            if (!tonConnectUI.connected) {
+                alert("Будь ласка, підключіть гаманець!");
+                await tonConnectUI.openModal();
+                return;
+            }
+
+            try {
+                const transaction = {
+                    validUntil: Math.floor(Date.now() / 1000) + 360,
+                    messages: [
+                        {
+                            address: "UQ__________________________________________0v8", 
+                            amount: "1000000" // 0.001 TON
+                        }
+                    ]
+                };
+
+                await tonConnectUI.sendTransaction(transaction);
+                
+                points += 50;
+                gameActive = true;
+                document.getElementById('gameover-modal').classList.add('hidden');
+                updateStats();
+                setupNewRound();
+                alert("Успішно! +50 балів зараховано на ваш рахунок.");
+
+            } catch (error) {
+                console.error("Transaction cancelled or failed:", error);
+                alert("Покупку скасовано або сталася помилка транзакції.");
             }
         }
 
@@ -388,26 +474,12 @@
                     gain.exponentialRampToValueAtTime(0.001, now + 0.3);
                     osc.start(now);
                     osc.stop(now + 0.3);
-                } else if (type === 'win') {
-                    let notes = [440, 554.37, 659.25, 880];
-                    notes.forEach((freq, index) => {
-                        let o = audioCtx.createOscillator();
-                        let g = audioCtx.createGain();
-                        o.connect(g);
-                        g.connect(audioCtx.destination);
-                        o.frequency.setValueAtTime(freq, now + index * 0.15);
-                        g.gain.setValueAtTime(0.3, now + index * 0.15);
-                        g.exponentialRampToValueAtTime(0.001, now + index * 0.15 + 0.4);
-                        o.start(now + index * 0.15);
-                        o.stop(now + index * 0.15 + 0.4);
-                    });
                 }
             } catch (e) {
                 console.log(e);
             }
         }
 
-        // Запуск гри одразу при завантаженні сторінки
         window.onload = function() {
             startGame();
         };
@@ -416,7 +488,8 @@
             initAudio();
             document.getElementById('win-modal').classList.add('hidden');
             document.getElementById('gameover-modal').classList.add('hidden');
-            score = 50;
+            points = 100;
+            score = 0;
             diamondsFound = 0;
             updateStats();
             gameActive = true;
@@ -428,6 +501,7 @@
         }
 
         function updateStats() {
+            document.getElementById('points').innerText = points;
             document.getElementById('score').innerText = score;
             document.getElementById('diamonds').innerText = diamondsFound;
         }
@@ -436,10 +510,10 @@
             const container = document.getElementById('barrels-container');
             container.innerHTML = '';
             
-            winningBarrelIndex = Math.floor(Math.random() * 3);
-            barrelsData = [0, 1, 2].map(i => (i === winningBarrelIndex));
+            winningBarrelIndex = Math.floor(Math.random() * TOTAL_BARRELS);
+            barrelsData = Array.from({length: TOTAL_BARRELS}, (_, i) => (i === winningBarrelIndex));
 
-            for (let i = 0; i < 3; i++) {
+            for (let i = 0; i < TOTAL_BARRELS; i++) {
                 const barrel = document.createElement('div');
                 barrel.className = 'barrel';
                 barrel.id = 'barrel-' + i;
@@ -451,7 +525,7 @@
                 container.appendChild(barrel);
             }
 
-            if (score < SPIN_COST) {
+            if (points < SPIN_COST_POINTS) {
                 triggerGameOver();
                 return;
             }
@@ -460,19 +534,19 @@
         }
 
         function spinWheel() {
-            if (!gameActive || score < SPIN_COST) return;
+            if (!gameActive || points < SPIN_COST_POINTS) return;
             
             initAudio();
 
-            score -= SPIN_COST;
+            points -= SPIN_COST_POINTS;
             updateStats();
 
             document.getElementById('spin-btn').disabled = true;
             playSound('spin');
 
-            const sectorAngle = 120;
+            const sectorAngle = 360 / TOTAL_BARRELS;
             const extraSpins = 4 * 360;
-            const targetAngle = extraSpins + (winningBarrelIndex * sectorAngle) + 60;
+            const targetAngle = extraSpins + (winningBarrelIndex * sectorAngle) + (sectorAngle / 2);
             
             currentRotation += targetAngle;
             const wheel = document.getElementById('wheel');
@@ -495,8 +569,13 @@
                 if (hasDiamond) {
                     contentDiv.innerHTML = '💎';
                     barrelEl.style.background = 'linear-gradient(135deg, #005c8a 0%, #002b3d 100%)';
-                    score += WIN_REWARD;
+                    points += WIN_REWARD_POINTS;
                     diamondsFound++;
+                    
+                    if (Math.random() < 0.5) {
+                        score += 5;
+                    }
+
                     playSound('diamond');
                     updateStats();
 
@@ -521,14 +600,12 @@
 
         function triggerWin() {
             gameActive = false;
-            playSound('win');
             document.getElementById('win-modal').classList.remove('hidden');
         }
 
         function triggerGameOver() {
             gameActive = false;
-            document.getElementById('gameover-modal').classList.add('hidden'); // залишаємо модалку або перегравання
-            resetGame();
+            document.getElementById('gameover-modal').classList.remove('hidden');
         }
     </script>
 </body>
