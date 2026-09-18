@@ -32,7 +32,7 @@
             text-align: center;
             z-index: 10;
             background: rgba(0, 0, 0, 0.9);
-            padding: 8px 12px;
+            padding: 6px 10px;
             border-radius: 12px;
             border: 2px solid #ffd700;
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
@@ -58,7 +58,7 @@
         }
         .stats {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             font-size: 11px;
         }
         .stat-item span {
@@ -66,10 +66,10 @@
             font-weight: bold;
         }
 
-        /* Блок игрока и кошелька над короной */
+        /* Блок над короной: Ник игрока + Управление кошельком */
         .player-crown-stage {
             position: absolute;
-            top: 32%;
+            top: 34%;
             left: 50%;
             transform: translate(-50%, -50%);
             display: flex;
@@ -82,20 +82,20 @@
             background: rgba(0, 0, 0, 0.85);
             border: 1px solid #ffd700;
             border-radius: 10px;
-            padding: 5px 12px;
-            margin-bottom: 8px;
+            padding: 4px 10px;
+            margin-bottom: 6px;
             text-align: center;
             box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
             cursor: pointer;
         }
         .player-name {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
             color: #fff;
             margin-bottom: 2px;
         }
         .wallet-action-text {
-            font-size: 10px;
+            font-size: 9px;
             color: #ff4d4d;
         }
         .wallet-action-text.connected {
@@ -103,45 +103,46 @@
         }
 
         .crown {
-            font-size: 34px;
+            font-size: 32px;
             filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
             animation: pulseCrown 2s infinite ease-in-out;
+            margin-bottom: 2px;
         }
         @keyframes pulseCrown {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.08); }
         }
 
+        /* Увеличенное колесо */
         .wheel-box {
-            margin-top: 4px;
-            width: 75px;
-            height: 75px;
+            width: 110px;
+            height: 110px;
             border: 4px solid #ffd700;
             border-radius: 50%;
             background: conic-gradient(#8B4513 0deg 72deg, #b8860b 72deg 144deg, #5c2d0c 144deg 216deg, #8B4513 216deg 288deg, #b8860b 288deg 360deg);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.7);
             transition: transform 1.5s cubic-bezier(0.15, 0.9, 0.2, 1);
             position: relative;
         }
         .wheel-center {
-            width: 24px;
-            height: 24px;
+            width: 32px;
+            height: 32px;
             background: #ffd700;
             border-radius: 50%;
             border: 2px solid #3d000c;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
+            font-size: 13px;
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
         }
 
         .barrels-container {
             position: absolute;
-            bottom: 145px;
+            bottom: 140px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -187,7 +188,7 @@
 
         .spin-btn-container {
             position: absolute;
-            bottom: 65px;
+            bottom: 62px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 15;
@@ -201,24 +202,24 @@
             text-shadow: 1px 1px 2px #000;
         }
 
-        /* Нижня фіксована панель для кнопки Обмін */
+        /* Нижняя панель с двумя кнопками: Обмен и Купить */
         .bottom-action-bar {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
             background: rgba(15, 5, 8, 0.95);
-            padding: 8px 12px;
+            padding: 8px 10px;
             display: flex;
-            gap: 10px;
+            gap: 8px;
             z-index: 20;
             border-top: 1px solid rgba(255, 215, 0, 0.3);
             box-shadow: 0 -4px 15px rgba(0,0,0,0.8);
         }
         .bottom-action-bar button {
             flex: 1;
-            padding: 10px;
-            font-size: 13px;
+            padding: 10px 4px;
+            font-size: 12px;
             font-weight: bold;
             border-radius: 8px;
             border: 1px solid #ffd700;
@@ -229,6 +230,10 @@
             background: linear-gradient(135deg, #00cc66 0%, #008844 100%);
             color: #fff;
             border-color: #00ffcc;
+        }
+        .btn-buy-main {
+            background: linear-gradient(135deg, #ffd700 0%, #daa520 100%);
+            color: #3d000c;
         }
 
         .modal {
@@ -302,7 +307,7 @@
     <div class="player-crown-stage">
         <div class="player-info-box" onclick="openWalletModal()">
             <div class="player-name" id="player-nickname">Игрок</div>
-            <div class="wallet-action-text" id="wallet-status-text">Нажмите, чтобы привязать кошелек</div>
+            <div class="wallet-action-text" id="wallet-status-text">Натисніть, щоб привязати гаманець</div>
         </div>
         <div class="crown">👑</div>
         <div class="wheel-box" id="wheel">
@@ -317,9 +322,10 @@
         <div class="spin-cost">5 бочонков • 50% шанс на Царей</div>
     </div>
 
-    <!-- Фиксированная нижняя панель с кнопкой Обмена -->
+    <!-- Фиксированная нижняя панель с двумя кнопками -->
     <div class="bottom-action-bar">
-        <button class="btn-exchange-main" onclick="exchangePointsToTsars()">🔄 Обміняти бали</button>
+        <button class="btn-exchange-main" onclick="exchangePointsToTsars()">🔄 Обміняти</button>
+        <button class="btn-buy-main" onclick="buyPointsWithTon()">💳 Купити бали</button>
     </div>
 
     <div id="win-modal" class="modal hidden">
@@ -340,7 +346,6 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Автоматически подтягиваем ник игрока из Telegram
         const user = tg.initDataUnsafe?.user;
         if (user) {
             const nickname = user.first_name + (user.last_name ? ' ' + user.last_name : '') || user.username || 'Игрок';
@@ -360,7 +365,6 @@
         const WIN_REWARD_POINTS = 20;
         const TOTAL_BARRELS = 5;
 
-        // Ваш реальный адрес кошелька:
         const MY_WALLET_ADDRESS = "UQDXq1iAqu88tVRG62_k03kAXELu_1gzRBMye-VZoFRIRtWw";
 
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
@@ -375,7 +379,7 @@
                 statusText.innerText = 'Гаманець: ' + shortAddr + ' (Натисніть для відключення)';
                 statusText.classList.add('connected');
             } else {
-                statusText.innerText = 'Нажмите, чтобы привязать кошелек';
+                statusText.innerText = 'Натисніть, щоб привязати гаманець';
                 statusText.classList.remove('connected');
             }
         });
@@ -396,12 +400,12 @@
         async function exchangePointsToTsars() {
             initAudio();
             if (points < 50) {
-                alert("Требуется не менее 50 баллов для обмена!");
+                alert("Потрібно щонайменше 50 балів для обміну!");
                 return;
             }
 
             if (!tonConnectUI.connected) {
-                alert("Пожалуйста, подключите кошелек для осуществления обмена!");
+                alert("Будь ласка, підключіть гаманець для здійснення обміну!");
                 await tonConnectUI.openModal();
                 return;
             }
@@ -411,11 +415,11 @@
                 const comment = `EXCHANGE_TSARS_${userId}`;
 
                 const transaction = {
-                    validUntil: Math.floor(Date.now() / 1000) + 360,
+                    validUntil: Math.floor(Date.now() / 1000) + 600,
                     messages: [
                         {
                             address: MY_WALLET_ADDRESS, 
-                            amount: "1000000", // 0.001 TON
+                            amount: "1000000", 
                             payload: btoa(comment)
                         }
                     ]
@@ -426,18 +430,18 @@
                 points -= 50;
                 score += 25;
                 updateStats();
-                alert("Успешно обменяно! +25 Царей добавлено в казну.");
+                alert("Успішно обміняно! +25 Царів додано в скарбницю.");
 
             } catch (error) {
                 console.error("Transaction cancelled or failed:", error);
-                alert("Обмен отменен или произошла ошибка транзакции.");
+                alert("Обмін скасовано або недостатньо коштів на комісію в гаманці.");
             }
         }
 
         async function buyPointsWithTon() {
             initAudio();
             if (!tonConnectUI.connected) {
-                alert("Пожалуйста, подключите кошелек!");
+                alert("Будь ласка, підключіть гаманець!");
                 await tonConnectUI.openModal();
                 return;
             }
@@ -447,11 +451,11 @@
                 const comment = `BUY_POINTS_${userId}`;
 
                 const transaction = {
-                    validUntil: Math.floor(Date.now() / 1000) + 360,
+                    validUntil: Math.floor(Date.now() / 1000) + 600,
                     messages: [
                         {
                             address: MY_WALLET_ADDRESS, 
-                            amount: "1000000", // 0.001 TON
+                            amount: "1000000", 
                             payload: btoa(comment)
                         }
                     ]
@@ -464,11 +468,11 @@
                 document.getElementById('gameover-modal').classList.add('hidden');
                 updateStats();
                 setupNewRound();
-                alert("Успешно! +50 баллов зачислено на ваш счет.");
+                alert("Успішно! +50 балів зараховано на ваш рахунок.");
 
             } catch (error) {
                 console.error("Transaction cancelled or failed:", error);
-                alert("Покупка отменена или произошла ошибка транзакции.");
+                alert("Покупку скасовано або сталася помилка транзакції.");
             }
         }
 
@@ -575,6 +579,33 @@
             document.getElementById('points').innerText = points;
             document.getElementById('score').innerText = score;
             document.getElementById('diamonds').innerText = diamondsFound;
+        }
+
+        function setupNewRound() {
+            const container = document.getElementById('barrels-container');
+            container.innerHTML = '';
+            
+            winningBarrelIndex = Math.floor(Math.random() * TOTAL_BARRELS);
+            barrelsData = Array.from({length: TOTAL_BARRELS}, (_, i) => (i === winningBarrelIndex));
+
+            for (let i = 0; i < TOTAL_BARRELS; i++) {
+                const barrel = document.createElement('div');
+                barrel.className = 'barrel';
+                barrel.id = 'barrel-' + i;
+                barrel.innerHTML = `
+                    <div class="barrel-rings ring-top"></div>
+                    <div class="barrel-content">?</div>
+                    <div class="barrel-rings ring-bottom"></div>
+                `;
+                container.appendChild(barrel);
+            }
+
+            if (points < SPIN_COST_POINTS) {
+                triggerGameOver();
+                return;
+            }
+
+            document.getElementById('spin-btn').disabled = false;
         }
     </script>
 </body>
