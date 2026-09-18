@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -122,7 +122,6 @@
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
         }
 
-        /* 5 бочечок в ряд */
         .barrels-container {
             position: absolute;
             bottom: 95px;
@@ -272,15 +271,15 @@
         <div class="header-top">
             <h1>Царство</h1>
             <div class="stats">
-                <div class="stat-item">Бали: <span id="points">100</span></div>
-                <div class="stat-item">Царі: <span id="score">0</span></div>
-                <div class="stat-item">Брил: <span id="diamonds">0</span>/10</div>
+                <div class="stat-item">Баллы: <span id="points">100</span></div>
+                <div class="stat-item">Цари: <span id="score">0</span></div>
+                <div class="stat-item">Алмазы: <span id="diamonds">0</span>/10</div>
             </div>
         </div>
         <div class="header-bottom">
-            <span id="wallet-status-text">Не підключено</span>
-            <button class="btn-exchange" onclick="exchangePointsToTsars()">🔄 Обмін</button>
-            <button class="btn-ton" onclick="openWalletModal()">💳 Гаманець</button>
+            <span id="wallet-status-text">Не подключен</span>
+            <button class="btn-exchange" onclick="exchangePointsToTsars()">🔄 Обмен</button>
+            <button class="btn-ton" onclick="openWalletModal()">💳 Кошелек</button>
         </div>
     </header>
 
@@ -294,22 +293,22 @@
     <div class="barrels-container" id="barrels-container"></div>
 
     <div class="spin-btn-container">
-        <button class="btn" id="spin-btn" onclick="spinWheel()">Крутити Колесо (10 балів)</button>
-        <div class="spin-cost">5 бочок • 50% шанс на Царів</div>
+        <button class="btn" id="spin-btn" onclick="spinWheel()">Крутить Колесо (10 баллов)</button>
+        <div class="spin-cost">5 бочонков • 50% шанс на Царей</div>
     </div>
 
     <div id="win-modal" class="modal hidden">
-        <h2>🎉 Тріумф! 🎉</h2>
-        <p>Ви зібрали всі 10 діамантів і довели свою мудрість!</p>
-        <button class="btn" onclick="resetGame()">Нове царствовування</button>
+        <h2>🎉 Триумф! 🎉</h2>
+        <p>Вы собрали все 10 алмазов и доказали свою мудрость!</p>
+        <button class="btn" onclick="resetGame()">Новое царствование</button>
     </div>
 
     <div id="gameover-modal" class="modal hidden">
-        <h2>⚠️ Бали закінчилися! ⚠️</h2>
-        <p>У вас не залишилося балів для прокрутів. Ви можете придбати 50 балів за 0.001 TON!</p>
-        <button class="btn" onclick="buyPointsWithTon()">Купити 50 балів (0.001 TON)</button>
+        <h2>⚠️ Баллы закончились! ⚠️</h2>
+        <p>У вас не осталось баллов для прокрутов. Вы можете приобрести 50 баллов за 0.001 TON!</p>
+        <button class="btn" onclick="buyPointsWithTon()">Купить 50 баллов (0.001 TON)</button>
         <br>
-        <button class="btn" style="background: #666; color: #fff; font-size: 11px; padding: 6px 12px;" onclick="resetGame()">Почати з нуля</button>
+        <button class="btn" style="background: #666; color: #fff; font-size: 11px; padding: 6px 12px;" onclick="resetGame()">Начать с нуля</button>
     </div>
 
     <script>
@@ -327,7 +326,10 @@
 
         const SPIN_COST_POINTS = 10;
         const WIN_REWARD_POINTS = 20;
-        const TOTAL_BARRELS = 5; // Зробили 5 бочечок замість 3
+        TOTAL_BARRELS = 5;
+
+        // Ваш реальный адрес кошелька:
+        const MY_WALLET_ADDRESS = "UQDXq1iAqu88tVRG62_k03kAXELu_1gzRBMye-VZoFRIRtWw";
 
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://providnykzpoun-bit.github.io/Wallet/tonconnect-manifest.json'
@@ -341,7 +343,7 @@
                 statusText.innerText = shortAddr;
                 statusText.classList.add('connected');
             } else {
-                statusText.innerText = 'Не підключено';
+                statusText.innerText = 'Не подключен';
                 statusText.classList.remove('connected');
             }
         });
@@ -362,23 +364,27 @@
         async function exchangePointsToTsars() {
             initAudio();
             if (points < 50) {
-                alert("Потрібно щонайменше 50 балів для обміну!");
+                alert("Требуется не менее 50 баллов для обмена!");
                 return;
             }
 
             if (!tonConnectUI.connected) {
-                alert("Будь ласка, підключіть гаманець для здійснення обміну!");
+                alert("Пожалуйста, подключите кошелек для осуществления обмена!");
                 await tonConnectUI.openModal();
                 return;
             }
 
             try {
+                const userId = tg.initDataUnsafe?.user?.id || "unknown";
+                const comment = `EXCHANGE_TSARS_${userId}`;
+
                 const transaction = {
                     validUntil: Math.floor(Date.now() / 1000) + 360,
                     messages: [
                         {
-                            address: "UQ__________________________________________0v8", 
-                            amount: "1000000" // 0.001 TON
+                            address: MY_WALLET_ADDRESS, 
+                            amount: "1000000", // 0.001 TON
+                            payload: btoa(comment)
                         }
                     ]
                 };
@@ -388,30 +394,33 @@
                 points -= 50;
                 score += 25;
                 updateStats();
-                alert("Успішно обміняно! +25 Царів додано до казни.");
+                alert("Успешно обменяно! +25 Царей добавлено в казну.");
 
             } catch (error) {
                 console.error("Transaction cancelled or failed:", error);
-                alert("Обмін скасовано або сталася помилка транзакції.");
+                alert("Обмен отменен или произошла ошибка транзакции.");
             }
         }
 
-        // Функція купівлі балів за 0.001 TON, коли вони на нулі
         async function buyPointsWithTon() {
             initAudio();
             if (!tonConnectUI.connected) {
-                alert("Будь ласка, підключіть гаманець!");
+                alert("Пожалуйста, подключите кошелек!");
                 await tonConnectUI.openModal();
                 return;
             }
 
             try {
+                const userId = tg.initDataUnsafe?.user?.id || "unknown";
+                const comment = `BUY_POINTS_${userId}`;
+
                 const transaction = {
                     validUntil: Math.floor(Date.now() / 1000) + 360,
                     messages: [
                         {
-                            address: "UQ__________________________________________0v8", 
-                            amount: "1000000" // 0.001 TON
+                            address: MY_WALLET_ADDRESS, 
+                            amount: "1000000", // 0.001 TON
+                            payload: btoa(comment)
                         }
                     ]
                 };
@@ -423,11 +432,11 @@
                 document.getElementById('gameover-modal').classList.add('hidden');
                 updateStats();
                 setupNewRound();
-                alert("Успішно! +50 балів зараховано на ваш рахунок.");
+                alert("Успешно! +50 баллов зачислено на ваш счет.");
 
             } catch (error) {
                 console.error("Transaction cancelled or failed:", error);
-                alert("Покупку скасовано або сталася помилка транзакції.");
+                alert("Покупка отменена или произошла ошибка транзакции.");
             }
         }
 
