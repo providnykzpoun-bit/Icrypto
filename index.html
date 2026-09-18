@@ -23,7 +23,6 @@
             align-items: center;
             justify-content: space-between;
         }
-        /* Шапка с балансом */
         header {
             margin-top: 15px;
             text-align: center;
@@ -52,7 +51,6 @@
             font-weight: bold;
         }
 
-        /* Центральная зона с короной и колесом */
         .center-stage {
             position: absolute;
             top: 36%;
@@ -73,7 +71,6 @@
             50% { transform: scale(1.08); }
         }
 
-        /* Колесо фортуны (визуальное) */
         .wheel-box {
             margin-top: 10px;
             width: 140px;
@@ -101,7 +98,6 @@
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
         }
 
-        /* Зона для бочонков снизу */
         .barrels-container {
             position: absolute;
             bottom: 120px;
@@ -112,7 +108,6 @@
             z-index: 10;
         }
 
-        /* Бочонок */
         .barrel {
             width: 75px;
             height: 95px;
@@ -149,7 +144,6 @@
             z-index: 3;
         }
 
-        /* Кнопка запуска колеса */
         .spin-btn-container {
             position: absolute;
             bottom: 30px;
@@ -158,7 +152,6 @@
             z-index: 15;
         }
 
-        /* Модальные окна */
         .modal {
             position: fixed;
             top: 0;
@@ -229,22 +222,18 @@
         </div>
     </div>
 
-    <!-- Контейнер для 3 бочонков -->
     <div class="barrels-container" id="barrels-container"></div>
 
-    <!-- Кнопка крутить колесо -->
     <div class="spin-btn-container">
         <button class="btn" id="spin-btn" onclick="spinWheel()">Крутить Колесо</button>
     </div>
 
-    <!-- Модальное окно старта -->
     <div id="start-modal" class="modal">
         <h2>👑 Добро пожаловать, Царь!</h2>
         <p>Вращайте Колесо Фортуны, чтобы выбрать царский бочонок!<br>💎 <b>Бриллиант</b> = +10 Царей<br>❌ <b>Пусто</b> = -5 Царей<br><br>Соберите 10 бриллиантов для победы!</p>
         <button class="btn" onclick="startGame()">Начать правление</button>
     </div>
 
-    <!-- Модальное окно победы -->
     <div id="win-modal" class="modal hidden">
         <h2>🎉 Триумф! 🎉</h2>
         <p>Вы собрали все 10 бриллиантов и доказали свою мудрость! Казна полна великих Царей.</p>
@@ -258,61 +247,72 @@
         let currentRotation = 0;
         let winningBarrelIndex = 0;
         let barrelsData = [];
+        let audioCtx = null;
 
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        
-        function playSound(type) {
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
+        }
 
-            let now = audioCtx.currentTime;
-            if (type === 'spin') {
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(300, now);
-                osc.frequency.exponentialRampToValueAtTime(600, now + 1.2);
-                gain.gain.setValueAtTime(0.2, now);
-                gain.exponentialRampToValueAtTime(0.001, now + 1.2);
-                osc.start(now);
-                osc.stop(now + 1.2);
-            } else if (type === 'diamond') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(523.25, now);
-                osc.frequency.setValueAtTime(659.25, now + 0.1);
-                osc.frequency.setValueAtTime(783.99, now + 0.2);
-                gain.gain.setValueAtTime(0.3, now);
-                gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-                osc.start(now);
-                osc.stop(now + 0.5);
-            } else if (type === 'empty') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(150, now);
-                osc.frequency.linearRampToValueAtTime(80, now + 0.3);
-                gain.gain.setValueAtTime(0.3, now);
-                gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-                osc.start(now);
-                osc.stop(now + 0.3);
-            } else if (type === 'win') {
-                let notes = [440, 554.37, 659.25, 880];
-                notes.forEach((freq, index) => {
-                    let o = audioCtx.createOscillator();
-                    let g = audioCtx.createGain();
-                    o.connect(g);
-                    g.connect(audioCtx.destination);
-                    o.frequency.setValueAtTime(freq, now + index * 0.15);
-                    g.gain.setValueAtTime(0.3, now + index * 0.15);
-                    g.exponentialRampToValueAtTime(0.001, now + index * 0.15 + 0.4);
-                    o.start(now + index * 0.15);
-                    o.stop(now + index * 0.15 + 0.4);
-                });
+        function playSound(type) {
+            try {
+                initAudio();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                let now = audioCtx.currentTime;
+                if (type === 'spin') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.exponentialRampToValueAtTime(600, now + 1.2);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+                    osc.start(now);
+                    osc.stop(now + 1.2);
+                } else if (type === 'diamond') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.setValueAtTime(659.25, now + 0.1);
+                    osc.frequency.setValueAtTime(783.99, now + 0.2);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+                    osc.start(now);
+                    osc.stop(now + 0.5);
+                } else if (type === 'empty') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(150, now);
+                    osc.frequency.linearRampToValueAtTime(80, now + 0.3);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'win') {
+                    let notes = [440, 554.37, 659.25, 880];
+                    notes.forEach((freq, index) => {
+                        let o = audioCtx.createOscillator();
+                        let g = audioCtx.createGain();
+                        o.connect(g);
+                        g.connect(audioCtx.destination);
+                        o.frequency.setValueAtTime(freq, now + index * 0.15);
+                        g.gain.setValueAtTime(0.3, now + index * 0.15);
+                        g.exponentialRampToValueAtTime(0.001, now + index * 0.15 + 0.4);
+                        o.start(now + index * 0.15);
+                        o.stop(now + index * 0.15 + 0.4);
+                    });
+                }
+            } catch (e) {
+                console.log(e);
             }
         }
 
         function startGame() {
+            initAudio();
             document.getElementById('start-modal').classList.add('hidden');
             score = 0;
             diamondsFound = 0;
@@ -335,11 +335,9 @@
             const container = document.getElementById('barrels-container');
             container.innerHTML = '';
             
-            // Случайным образом определяем, в каком из 3 бочонков прячется бриллиант
             winningBarrelIndex = Math.floor(Math.random() * 3);
             barrelsData = [0, 1, 2].map(i => (i === winningBarrelIndex));
 
-            // Создаем новые бочонки со знаками вопроса
             for (let i = 0; i < 3; i++) {
                 const barrel = document.createElement('div');
                 barrel.className = 'barrel';
@@ -360,20 +358,15 @@
             document.getElementById('spin-btn').disabled = true;
             playSound('spin');
 
-            // Рандомный выбор победного сектора колеса (0, 1 или 2)
             const targetBarrel = Math.floor(Math.random() * 3);
-            
-            // Рассчитываем угол вращения (полные обороты + сектор)
             const sectorAngle = 120;
-            const extraSpins = 3 * 360;
-            // Уголы для секторов: 0 -> 60°, 1 -> 180°, 2 -> 300°
+            const extraSpins = 4 * 360;
             const targetAngle = extraSpins + (targetBarrel * sectorAngle) + 60;
             
             currentRotation += targetAngle;
             const wheel = document.getElementById('wheel');
             wheel.style.transform = `rotate(${currentRotation}deg)`;
 
-            // Ждем окончания анимации вращения (1.5 секунды)
             setTimeout(() => {
                 revealBarrel(targetBarrel);
             }, 1500);
@@ -381,6 +374,7 @@
 
         function revealBarrel(selectedIdx) {
             const barrelEl = document.getElementById('barrel-' + selectedIdx);
+            if (!barrelEl) return;
             barrelEl.classList.add('selected');
 
             const contentDiv = barrelEl.querySelector('.barrel-content');
@@ -407,7 +401,6 @@
                     updateStats();
                 }
 
-                // Пауза перед подготовкой нового раунда с другими бочонками
                 setTimeout(() => {
                     if (gameActive) {
                         setupNewRound();
