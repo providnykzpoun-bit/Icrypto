@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Царь — Колесо Фортуны</title>
-    <!-- Подключаем официальный TonConnect UI SDK -->
-    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -243,7 +241,7 @@
                 <div class="stat-item">Брил: <span id="diamonds">0</span>/10</div>
             </div>
         </div>
-        <button class="btn btn-ton" style="padding: 6px 12px; font-size: 13px; margin: 0; width: auto;" onclick="openWalletModal()">💳 Кошелек</button>
+        <button class="btn btn-ton" style="padding: 6px 12px; font-size: 13px; margin: 0; width: auto;" onclick="openWallet()">💳 Кошелек</button>
     </header>
 
     <div class="center-stage">
@@ -265,7 +263,7 @@
         <h2>👑 Добро пожаловать, Царь!</h2>
         <p>Вам начислено <b>50 Царей</b>.<br>Каждый прокрут стоит <b>10 Царей</b>.<br>💎 <b>Бриллиант</b> = +30 Царей.<br><br>Соберите 10 бриллиантов для победы!</p>
         
-        <button class="btn btn-ton" onclick="openWalletModal()">🔗 Подключить кошелек</button><br>
+        <button class="btn btn-ton" onclick="openWallet()">🔗 Подключить кошелек</button><br>
         <button class="btn" onclick="startGame()">Начать правление</button>
     </div>
 
@@ -295,39 +293,24 @@
         const WIN_REWARD = 30;
         const TARGET_WALLET = "UQDXq1iAqu88tVRG62_k03kAXELu_1gzRBMye-VZoFRIRtWw";
 
-        let tonConnectUI = null;
-
-        // Ініціалізуємо TonConnect тільки після повного завантаження сторінки
-        window.addEventListener('DOMContentLoaded', () => {
-            try {
-                if (typeof TonConnectUI !== 'undefined') {
-                    tonConnectUI = new TonConnectUI({
-                        manifestUrl: 'https://providnykzpoun-bit.github.io/lcrypto/tonconnect-manifest.json',
-                        uiPreferences: {
-                            borderRadius: 's'
-                        }
-                    });
-                    console.log("TonConnect успішно ініціалізовано");
-                } else {
-                    console.error("Клас TonConnectUI не знайдено!");
-                }
-            } catch (err) {
-                console.error("Помилка ініціалізації TonConnect:", err);
-            }
-        });
-
-        function openWalletModal() {
+        function openWallet() {
             initAudio();
-            try {
-                if (tonConnectUI) {
-                    tonConnectUI.openModal();
-                } else {
-                    alert("TonConnect ще завантажується або недоступний. Спробуйте ще раз за секунду.");
-                }
-            } catch (e) {
-                console.error("Помилка відкриття гаманця:", e);
-                alert("Помилка: " + e.message);
-            }
+            // Прямое открытие перевода через Tonkeeper / универсальную ссылку
+            const tonTransferUrl = `https://app.tonkeeper.com/transfer/${TARGET_WALLET}?amount=1000000&text=Buy_50_Czars`;
+            window.open(tonTransferUrl, '_blank');
+        }
+
+        function buyPointsWithTon() {
+            initAudio();
+            openWallet();
+            // Начисляем царей после возврата/клика
+            setTimeout(() => {
+                score += 50;
+                updateStats();
+                document.getElementById('gameover-modal').classList.add('hidden');
+                gameActive = true;
+                setupNewRound();
+            }, 1000);
         }
 
         function initAudio() {
@@ -511,33 +494,6 @@
         function triggerGameOver() {
             gameActive = false;
             document.getElementById('gameover-modal').classList.remove('hidden');
-        }
-
-        async function buyPointsWithTon() {
-            initAudio();
-            try {
-                if (tonConnectUI && tonConnectUI.connected) {
-                    const transaction = {
-                        validUntil: Math.floor(Date.now() / 1000) + 60,
-                        messages: [
-                            {
-                                address: TARGET_WALLET,
-                                amount: "1000000" // 0.001 TON
-                            }
-                        ]
-                    };
-                    await tonConnectUI.sendTransaction(transaction);
-                    score += 50;
-                    updateStats();
-                    document.getElementById('gameover-modal').classList.add('hidden');
-                    gameActive = true;
-                    setupNewRound();
-                } else if (tonConnectUI) {
-                    await tonConnectUI.openModal();
-                }
-            } catch (e) {
-                console.log(e);
-            }
         }
     </script>
 </body>
