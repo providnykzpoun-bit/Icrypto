@@ -300,9 +300,9 @@
         const WIN_REWARD = 30;
         const TARGET_WALLET = "UQDXq1iAqu88tVRG62_k03kAXELu_1gzRBMye-VZoFRIRtWw";
 
-        // Инициализация официального TonConnect UI (появляется меню выбора кошельков)
+        // Инициализация официального TonConnect UI с исправленной ссылкой на ваш манифест
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: 'https://raw.githubusercontent.com/ton-connect/docs/main/media/tonconnect-manifest.json',
+            manifestUrl: 'https://providnykzpoun-bit.github.io/lcrypto/tonconnect-manifest.json',
             uiPreferences: {
                 borderRadius: 's'
             }
@@ -427,7 +427,6 @@
         function spinWheel() {
             if (!gameActive || score < SPIN_COST) return;
             
-            // Разблокировка звука при первом клике пользователя
             initAudio();
 
             score -= SPIN_COST;
@@ -498,7 +497,6 @@
             document.getElementById('gameover-modal').classList.remove('hidden');
         }
 
-        // Покупка баллов через TonConnect или прямую ссылку
         async function buyPointsWithTon() {
             initAudio();
             try {
