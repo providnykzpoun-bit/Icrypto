@@ -37,7 +37,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             width: 92%;
             max-width: 380px;
         }
@@ -64,11 +64,22 @@
             font-weight: bold;
         }
 
-        #ton-connect-button {
-            display: flex;
-            justify-content: center;
+        /* Наша кастомная кнопка кошелька */
+        .wallet-btn {
+            background: linear-gradient(135deg, #0098EA 0%, #0066AA 100%);
+            color: #fff;
+            border: none;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 152, 234, 0.5);
             width: 100%;
-            min-height: 35px;
+            transition: transform 0.2s;
+        }
+        .wallet-btn:active {
+            transform: scale(0.96);
         }
 
         .center-stage {
@@ -249,8 +260,8 @@
                 <div class="stat-item">Брил: <span id="diamonds">0</span>/10</div>
             </div>
         </div>
-        <!-- Кнопка подключения TON кошелька -->
-        <div id="ton-connect-button"></div>
+        <!-- Кастомная кнопка подключения кошелька -->
+        <button class="wallet-btn" id="wallet-connect-btn" onclick="toggleWalletConnection()">🔌 Підключити кошелек TON</button>
     </header>
 
     <div class="center-stage">
@@ -287,12 +298,25 @@
     </div>
 
     <script>
-        // Инициализация TON Connect с защитой от сбоев
+        // Инициализация TON Connect SDK
         let tonConnectUI;
         try {
             tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-                manifestUrl: window.location.origin + '/tonconnect-manifest.json',
-                buttonRootId: 'ton-connect-button'
+                manifestUrl: window.location.origin + '/tonconnect-manifest.json'
+            });
+
+            // Отслеживаем статус подключения кошелька
+            tonConnectUI.onStatusChange(wallet => {
+                const btn = document.getElementById('wallet-connect-btn');
+                if (wallet) {
+                    const address = wallet.account.address;
+                    const shortAddr = address.slice(0, 4) + '...' + address.slice(-4);
+                    btn.innerText = '✅ ' + shortAddr;
+                    btn.style.background = 'linear-gradient(135deg, #28a745 0%, #1e7e34 100%)';
+                } else {
+                    btn.innerText = '🔌 Підключити кошелек TON';
+                    btn.style.background = 'linear-gradient(135deg, #0098EA 0%, #0066AA 100%)';
+                }
             });
         } catch (e) {
             console.log("TON Connect init error:", e);
@@ -368,6 +392,22 @@
                 }
             } catch (e) {
                 console.log(e);
+            }
+        }
+
+        async function toggleWalletConnection() {
+            try {
+                if (!tonConnectUI) {
+                    alert("TON Connect не завантажився.");
+                    return;
+                }
+                if (tonConnectUI.connected) {
+                    await tonConnectUI.disconnect();
+                } else {
+                    await tonConnectUI.openModal();
+                }
+            } catch (e) {
+                console.log("Wallet error:", e);
             }
         }
 
