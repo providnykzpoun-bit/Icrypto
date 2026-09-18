@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Царь — Игра</title>
+    <title>Царь — Колесо Фортуны</title>
     <style>
         * {
             box-sizing: border-box;
@@ -52,20 +52,19 @@
             font-weight: bold;
         }
 
-        /* Центральная зона с короной */
+        /* Центральная зона с короной и колесом */
         .center-stage {
             position: absolute;
-            top: 40%;
+            top: 36%;
             left: 50%;
             transform: translate(-50%, -50%);
             display: flex;
             flex-direction: column;
             align-items: center;
-            pointer-events: none;
             z-index: 5;
         }
         .crown {
-            font-size: 90px;
+            font-size: 70px;
             filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
             animation: pulseCrown 2s infinite ease-in-out;
         }
@@ -73,21 +72,39 @@
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.08); }
         }
-        .throne-text {
+
+        /* Колесо фортуны (визуальное) */
+        .wheel-box {
             margin-top: 10px;
-            font-size: 14px;
-            background: rgba(0,0,0,0.7);
-            padding: 5px 15px;
-            border-radius: 10px;
-            border: 1px solid #ffd700;
-            color: #ffd700;
-            text-align: center;
+            width: 140px;
+            height: 140px;
+            border: 4px solid #ffd700;
+            border-radius: 50%;
+            background: conic-gradient(#8B4513 0deg 120deg, #b8860b 120deg 240deg, #5c2d0c 240deg 360deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+            transition: transform 1.5s cubic-bezier(0.15, 0.9, 0.2, 1);
+            position: relative;
+        }
+        .wheel-center {
+            width: 50px;
+            height: 50px;
+            background: #ffd700;
+            border-radius: 50%;
+            border: 3px solid #3d000c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
         }
 
-        /* Зона для выбора бочонков снизу */
+        /* Зона для бочонков снизу */
         .barrels-container {
             position: absolute;
-            bottom: 60px;
+            bottom: 120px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -97,41 +114,48 @@
 
         /* Бочонок */
         .barrel {
-            width: 85px;
-            height: 105px;
+            width: 75px;
+            height: 95px;
             background: linear-gradient(135deg, #8B4513 0%, #5c2d0c 100%);
             border: 3px solid #ffd700;
-            border-radius: 15px;
+            border-radius: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.7);
-            transition: transform 0.15s, background 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.7);
             position: relative;
+            transition: all 0.3s;
         }
-        .barrel:hover {
-            transform: scale(1.05);
-        }
-        .barrel:active {
-            transform: scale(0.95);
+        .barrel.selected {
+            transform: scale(1.15);
+            border-color: #fff;
+            box-shadow: 0 0 25px #ffd700;
         }
         .barrel-rings {
             position: absolute;
             width: 100%;
-            height: 9px;
+            height: 7px;
             background: #b8860b;
             box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
         }
-        .ring-top { top: 18px; }
-        .ring-bottom { bottom: 18px; }
+        .ring-top { top: 15px; }
+        .ring-bottom { bottom: 15px; }
         .barrel-content {
-            font-size: 38px;
+            font-size: 32px;
             font-weight: bold;
             color: #ffd700;
             text-shadow: 2px 2px 2px #000;
             z-index: 3;
+        }
+
+        /* Кнопка запуска колеса */
+        .spin-btn-container {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 15;
         }
 
         /* Модальные окна */
@@ -178,6 +202,11 @@
             transform: scale(1.05);
             background: linear-gradient(135deg, #ffe44d 0%, #ffcc00 100%);
         }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
         .hidden {
             display: none !important;
         }
@@ -195,16 +224,23 @@
 
     <div class="center-stage">
         <div class="crown">👑</div>
-        <div class="throne-text">Трон Царя<br><small>Выберите бочонок снизу!</small></div>
+        <div class="wheel-box" id="wheel">
+            <div class="wheel-center">🎯</div>
+        </div>
     </div>
 
     <!-- Контейнер для 3 бочонков -->
     <div class="barrels-container" id="barrels-container"></div>
 
+    <!-- Кнопка крутить колесо -->
+    <div class="spin-btn-container">
+        <button class="btn" id="spin-btn" onclick="spinWheel()">Крутить Колесо</button>
+    </div>
+
     <!-- Модальное окно старта -->
     <div id="start-modal" class="modal">
         <h2>👑 Добро пожаловать, Царь!</h2>
-        <p>Перед вами царские бочонки. Выбирайте один из них:<br>💎 <b>Бриллиант</b> = +10 Царей<br>❌ <b>Пусто</b> = -5 Царей<br><br>Соберите 10 бриллиантов для победы!</p>
+        <p>Вращайте Колесо Фортуны, чтобы выбрать царский бочонок!<br>💎 <b>Бриллиант</b> = +10 Царей<br>❌ <b>Пусто</b> = -5 Царей<br><br>Соберите 10 бриллиантов для победы!</p>
         <button class="btn" onclick="startGame()">Начать правление</button>
     </div>
 
@@ -219,9 +255,10 @@
         let score = 0;
         let diamondsFound = 0;
         let gameActive = false;
-        let canClick = true;
+        let currentRotation = 0;
+        let winningBarrelIndex = 0;
+        let barrelsData = [];
 
-        // Аудиоэффекты через Web Audio API
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         
         function playSound(type) {
@@ -234,7 +271,15 @@
             gain.connect(audioCtx.destination);
 
             let now = audioCtx.currentTime;
-            if (type === 'diamond') {
+            if (type === 'spin') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(600, now + 1.2);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+                osc.start(now);
+                osc.stop(now + 1.2);
+            } else if (type === 'diamond') {
                 osc.type = 'triangle';
                 osc.frequency.setValueAtTime(523.25, now);
                 osc.frequency.setValueAtTime(659.25, now + 0.1);
@@ -273,7 +318,7 @@
             diamondsFound = 0;
             updateStats();
             gameActive = true;
-            spawnBarrels();
+            setupNewRound();
         }
 
         function resetGame() {
@@ -286,62 +331,90 @@
             document.getElementById('diamonds').innerText = diamondsFound;
         }
 
-        function spawnBarrels() {
-            if (!gameActive) return;
-            canClick = true;
+        function setupNewRound() {
             const container = document.getElementById('barrels-container');
             container.innerHTML = '';
+            
+            // Случайным образом определяем, в каком из 3 бочонков прячется бриллиант
+            winningBarrelIndex = Math.floor(Math.random() * 3);
+            barrelsData = [0, 1, 2].map(i => (i === winningBarrelIndex));
 
-            // Определяем, в каком из 3 бочонков будет спрятан бриллиант (случайно от 0 до 2)
-            const winningIndex = Math.floor(Math.random() * 3);
-
+            // Создаем новые бочонки со знаками вопроса
             for (let i = 0; i < 3; i++) {
                 const barrel = document.createElement('div');
                 barrel.className = 'barrel';
+                barrel.id = 'barrel-' + i;
                 barrel.innerHTML = `
                     <div class="barrel-rings ring-top"></div>
                     <div class="barrel-content">?</div>
                     <div class="barrel-rings ring-bottom"></div>
                 `;
-
-                const hasDiamond = (i === winningIndex);
-
-                barrel.addEventListener('click', () => {
-                    if (!canClick || !gameActive) return;
-                    canClick = false;
-
-                    const contentDiv = barrel.querySelector('.barrel-content');
-
-                    if (hasDiamond) {
-                        contentDiv.innerHTML = '💎';
-                        barrel.style.background = 'linear-gradient(135deg, #005c8a 0%, #002b3d 100%)';
-                        score += 10;
-                        diamondsFound++;
-                        playSound('diamond');
-                        updateStats();
-
-                        if (diamondsFound >= 10) {
-                            triggerWin();
-                            return;
-                        }
-                    } else {
-                        contentDiv.innerHTML = '❌';
-                        barrel.style.background = 'linear-gradient(135deg, #8a0000 0%, #3d0000 100%)';
-                        score -= 5;
-                        playSound('empty');
-                        updateStats();
-                    }
-
-                    // Через 1.2 секунды автоматически создаем новую тройку бочонков
-                    setTimeout(() => {
-                        if (gameActive) {
-                            spawnBarrels();
-                        }
-                    }, 1200);
-                });
-
                 container.appendChild(barrel);
             }
+
+            document.getElementById('spin-btn').disabled = false;
+        }
+
+        function spinWheel() {
+            if (!gameActive) return;
+            document.getElementById('spin-btn').disabled = true;
+            playSound('spin');
+
+            // Рандомный выбор победного сектора колеса (0, 1 или 2)
+            const targetBarrel = Math.floor(Math.random() * 3);
+            
+            // Рассчитываем угол вращения (полные обороты + сектор)
+            const sectorAngle = 120;
+            const extraSpins = 3 * 360;
+            // Уголы для секторов: 0 -> 60°, 1 -> 180°, 2 -> 300°
+            const targetAngle = extraSpins + (targetBarrel * sectorAngle) + 60;
+            
+            currentRotation += targetAngle;
+            const wheel = document.getElementById('wheel');
+            wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+            // Ждем окончания анимации вращения (1.5 секунды)
+            setTimeout(() => {
+                revealBarrel(targetBarrel);
+            }, 1500);
+        }
+
+        function revealBarrel(selectedIdx) {
+            const barrelEl = document.getElementById('barrel-' + selectedIdx);
+            barrelEl.classList.add('selected');
+
+            const contentDiv = barrelEl.querySelector('.barrel-content');
+            const hasDiamond = barrelsData[selectedIdx];
+
+            setTimeout(() => {
+                if (hasDiamond) {
+                    contentDiv.innerHTML = '💎';
+                    barrelEl.style.background = 'linear-gradient(135deg, #005c8a 0%, #002b3d 100%)';
+                    score += 10;
+                    diamondsFound++;
+                    playSound('diamond');
+                    updateStats();
+
+                    if (diamondsFound >= 10) {
+                        triggerWin();
+                        return;
+                    }
+                } else {
+                    contentDiv.innerHTML = '❌';
+                    barrelEl.style.background = 'linear-gradient(135deg, #8a0000 0%, #3d0000 100%)';
+                    score -= 5;
+                    playSound('empty');
+                    updateStats();
+                }
+
+                // Пауза перед подготовкой нового раунда с другими бочонками
+                setTimeout(() => {
+                    if (gameActive) {
+                        setupNewRound();
+                    }
+                }, 1500);
+
+            }, 400);
         }
 
         function triggerWin() {
