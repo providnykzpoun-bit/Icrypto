@@ -64,10 +64,19 @@
             font-weight: bold;
         }
 
+        /* Контейнер для кнопки кошелька в шапке */
         #ton-connect-button {
             width: 100%;
             display: flex;
             justify-content: center;
+        }
+
+        /* Контейнер для кнопки кошелька на стартовом окне */
+        #ton-connect-start-button {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 12px;
         }
 
         .center-stage {
@@ -271,8 +280,9 @@
         <h2>👑 Добро пожаловать, Царь!</h2>
         <p>Вам начислено <b>50 Царей</b>.<br>Каждый прокрут стоит <b>10 Царей</b>.<br>💎 <b>Бриллиант</b> = +30 Царей.<br><br>Соберите 10 бриллиантов для победы!</p>
         
-        <!-- Кнопка підключення гаманця прямо на стартовому вікні -->
-        <button class="btn btn-ton" onclick="connectWallet()">🔗 Подключить кошелек</button><br>
+        <!-- Официальная кнопка TonConnect рендерится сюда -->
+        <div id="ton-connect-start-button"></div><br>
+
         <button class="btn" onclick="startGame()">Начать правление</button>
     </div>
 
@@ -302,19 +312,14 @@
         const WIN_REWARD = 30;
         const TARGET_WALLET = "UQDXq1iAqu88tVRG62_k03kAXELu_1gzRBMye-VZoFRIRtWw";
 
-        // Ініціалізація TonConnect UI з виведенням стандартної кнопки у шапку
+        // Инициализация TonConnect UI с привязкой к стартовой кнопке
         const tonConnectUI = new TonConnectUI({
             manifestUrl: 'https://providnykzpoun-bit.github.io/lcrypto/tonconnect-manifest.json',
             uiPreferences: {
                 borderRadius: 's'
             },
-            buttonRootId: 'ton-connect-button'
+            buttonRootId: 'ton-connect-start-button'
         });
-
-        function connectWallet() {
-            initAudio();
-            tonConnectUI.openModal();
-        }
 
         function initAudio() {
             if (!audioCtx) {
@@ -380,6 +385,14 @@
 
         function startGame() {
             initAudio();
+            
+            // Переносим кнопку кошелька из стартового окна в шапку, чтобы она осталась доступной во время игры
+            const startBtnContainer = document.getElementById('ton-connect-start-button');
+            const headerBtnContainer = document.getElementById('ton-connect-button');
+            if (startBtnContainer && startBtnContainer.children.length > 0) {
+                headerBtnContainer.appendChild(startBtnContainer.children[0]);
+            }
+
             document.getElementById('start-modal').classList.add('hidden');
             document.getElementById('gameover-modal').classList.add('hidden');
             score = 50;
