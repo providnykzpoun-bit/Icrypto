@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Царь — Колесо Фортуны</title>
+    <!-- Подключаем официальный TonConnect UI SDK -->
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -62,21 +64,11 @@
             font-weight: bold;
         }
 
-        .wallet-btn {
-            background: linear-gradient(135deg, #0098EA 0%, #0066AA 100%);
-            color: #fff;
-            border: none;
-            padding: 6px 14px;
-            font-size: 13px;
-            font-weight: bold;
-            border-radius: 15px;
-            cursor: pointer;
-            box-shadow: 0 0 10px rgba(0, 152, 234, 0.5);
+        /* Контейнер для фирменной кнопки TonConnect */
+        #ton-connect-button {
             width: 100%;
-            transition: transform 0.2s;
-        }
-        .wallet-btn:active {
-            transform: scale(0.96);
+            display: flex;
+            justify-content: center;
         }
 
         .center-stage {
@@ -149,6 +141,7 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.7);
             position: relative;
             transition: all 0.3s;
+            cursor: pointer;
         }
         .barrel.selected {
             transform: scale(1.15);
@@ -257,7 +250,8 @@
                 <div class="stat-item">Брил: <span id="diamonds">0</span>/10</div>
             </div>
         </div>
-        <button class="wallet-btn" id="wallet-connect-btn" onclick="connectWallet()">🔌 Підключити кошелек TON</button>
+        <!-- Сюда встроится официальное меню выбора кошельков TonConnect -->
+        <div id="ton-connect-button"></div>
     </header>
 
     <div class="center-stage">
@@ -301,11 +295,23 @@
         let winningBarrelIndex = 0;
         let barrelsData = [];
         let audioCtx = null;
-        let isWalletConnected = false;
 
         const SPIN_COST = 10;
         const WIN_REWARD = 30;
         const TARGET_WALLET = "UQDXq1iAqu88tVRG62_k03kAXELu_1gzRBMye-VZoFRIRtWw";
+
+        // Инициализация официального TonConnect UI (появляется меню выбора кошельков)
+        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+            manifestUrl: 'https://raw.githubusercontent.com/ton-connect/docs/main/media/tonconnect-manifest.json',
+            uiPreferences: {
+                borderRadius: 's'
+            }
+        });
+
+        // Монтируем кнопку выбора кошельков в наш блок
+        tonConnectUI.uiOptions = {
+            buttonRootId: 'ton-connect-button'
+        };
 
         function initAudio() {
             if (!audioCtx) {
@@ -369,33 +375,6 @@
             }
         }
 
-        // Надежное подключение через Telegram WebApp и кошелек
-        function connectWallet() {
-            if (isWalletConnected) {
-                if (confirm("Відключити кошелек?")) {
-                    isWalletConnected = false;
-                    const btn = document.getElementById('wallet-connect-btn');
-                    btn.innerText = '🔌 Підключити кошелек TON';
-                    btn.style.background = 'linear-gradient(135deg, #0098EA 0%, #0066AA 100%)';
-                }
-                return;
-            }
-
-            // Открываем встроенный кошелек Telegram или перенаправляем на TON Space / Wallet Bot
-            if (window.Telegram && window.Telegram.WebApp) {
-                // Если запущено в Telegram, используем встроенную ссылку на кошелек
-                window.open('https://t.me/wallet', '_blank');
-            } else {
-                window.open('https://app.tonkeeper.com/', '_blank');
-            }
-
-            // Имитируем успешное подключение для удобства игрока
-            isWalletConnected = true;
-            const btn = document.getElementById('wallet-connect-btn');
-            btn.innerText = '✅ Гаманець підключено';
-            btn.style.background = 'linear-gradient(135deg, #28a745 0%, #1e7e34 100%)';
-        }
-
         function startGame() {
             initAudio();
             document.getElementById('start-modal').classList.add('hidden');
@@ -448,6 +427,9 @@
         function spinWheel() {
             if (!gameActive || score < SPIN_COST) return;
             
+            // Разблокировка звука при первом клике пользователя
+            initAudio();
+
             score -= SPIN_COST;
             updateStats();
 
@@ -516,13 +498,29 @@
             document.getElementById('gameover-modal').classList.remove('hidden');
         }
 
-        // Покупка баллов через прямую ссылку на перевод в TON
-        function buyPointsWithTon() {
-            // Ссылка для перевода 0.001 TON на ваш адрес
-            const payUrl = `https://app.tonkeeper.com/transfer/${TARGET_WALLET}?amount=1000000&text=Buy%20Tsars`;
-            window.open(payUrl, '_blank');
+        // Покупка баллов через TonConnect или прямую ссылку
+        async function buyPointsWithTon() {
+            initAudio();
+            try {
+                if (tonConnectUI.connected) {
+                    const transaction = {
+                        validUntil: Math.floor(Date.now() / 1000) + 60,
+                        messages: [
+                            {
+                                address: TARGET_WALLET,
+                                amount: "1000000" // 0.001 TON
+                            }
+                        ]
+                    };
+                    await tonConnectUI.sendTransaction(transaction);
+                } else {
+                    const payUrl = `https://app.tonkeeper.com/transfer/${TARGET_WALLET}?amount=1000000&text=Buy%20Tsars`;
+                    window.open(payUrl, '_blank');
+                }
+            } catch (e) {
+                console.log(e);
+            }
 
-            // Автоматически начисляем Цари игроку после клика
             score += 50;
             updateStats();
             document.getElementById('gameover-modal').classList.add('hidden');
