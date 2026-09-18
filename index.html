@@ -243,7 +243,6 @@
                 <div class="stat-item">Брил: <span id="diamonds">0</span>/10</div>
             </div>
         </div>
-        <!-- Кнопка гаманця у шапці гри -->
         <button class="btn btn-ton" style="padding: 6px 12px; font-size: 13px; margin: 0; width: auto;" onclick="openWalletModal()">💳 Кошелек</button>
     </header>
 
@@ -261,12 +260,11 @@
         <div class="spin-cost">Стоимость прокрута: 10 Царей</div>
     </div>
 
-    <!-- Стартове вікно із власною надійною кнопкою гаманця -->
+    <!-- Стартове вікно -->
     <div id="start-modal" class="modal">
         <h2>👑 Добро пожаловать, Царь!</h2>
         <p>Вам начислено <b>50 Царей</b>.<br>Каждый прокрут стоит <b>10 Царей</b>.<br>💎 <b>Бриллиант</b> = +30 Царей.<br><br>Соберите 10 бриллиантов для победы!</p>
         
-        <!-- Надійна кнопка підключення гаманця на старті -->
         <button class="btn btn-ton" onclick="openWalletModal()">🔗 Подключить кошелек</button><br>
         <button class="btn" onclick="startGame()">Начать правление</button>
     </div>
@@ -298,19 +296,29 @@
         const TARGET_WALLET = "UQDXq1iAqu88tVRG62_k03kAXELu_1gzRBMye-VZoFRIRtWw";
 
         // Ініціалізація TonConnect UI
-        const tonConnectUI = new TonConnectUI({
-            manifestUrl: 'https://providnykzpoun-bit.github.io/lcrypto/tonconnect-manifest.json',
-            uiPreferences: {
-                borderRadius: 's'
-            }
-        });
+        let tonConnectUI;
+        try {
+            tonConnectUI = new TonConnectUI({
+                manifestUrl: 'https://providnykzpoun-bit.github.io/lcrypto/tonconnect-manifest.json',
+                uiPreferences: {
+                    borderRadius: 's'
+                }
+            });
+        } catch (err) {
+            console.error("Ошибка инициализации TonConnect:", err);
+        }
 
-        function openWalletModal() {
+        async function openWalletModal() {
             initAudio();
             try {
-                tonConnectUI.openModal();
+                if (tonConnectUI) {
+                    await tonConnectUI.openModal();
+                } else {
+                    alert("TonConnect не ініціалізовано!");
+                }
             } catch (e) {
-                console.log(e);
+                console.error("Помилка відкриття гаманця:", e);
+                alert("Помилка відкриття гаманця: " + e.message);
             }
         }
 
@@ -487,14 +495,13 @@
         }
 
         function triggerWin() {
-            gameActive5 = false;
+            gameActive = false;
             playSound('win');
             document.getElementById('win-modal').classList.remove('hidden');
         }
 
         function triggerGameOver() {
             gameActive = false;
-            document.getElementById('gameover-modal').classList.add('hidden'); // hidden or not
             document.getElementById('gameover-modal').classList.remove('hidden');
         }
 
