@@ -31,15 +31,15 @@
             margin-top: 8px;
             text-align: center;
             z-index: 10;
-            background: rgba(0, 0, 0, 0.85);
-            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 10px 14px;
             border-radius: 12px;
             border: 2px solid #ffd700;
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
             width: 94%;
             max-width: 380px;
         }
@@ -65,10 +65,18 @@
             color: #fff;
             font-weight: bold;
         }
+        .header-bottom {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            align-items: center;
+            border-top: 1px solid rgba(255, 215, 0, 0.3);
+            padding-top: 6px;
+        }
 
         .center-stage {
             position: absolute;
-            top: 36%;
+            top: 38%;
             left: 50%;
             transform: translate(-50%, -50%);
             display: flex;
@@ -227,16 +235,23 @@
         .btn-ton {
             background: linear-gradient(135deg, #0098EA 0%, #0066AA 100%);
             color: #fff;
-            width: 100%;
-            max-width: 260px;
+            padding: 5px 12px;
+            font-size: 12px;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 152, 234, 0.5);
         }
         .hidden {
             display: none !important;
         }
-        #wallet-status {
-            font-size: 12px;
+        #wallet-status-text {
+            font-size: 11px;
+            color: #ff4d4d;
+        }
+        #wallet-status-text.connected {
             color: #00ffcc;
-            margin-top: 5px;
         }
     </style>
 </head>
@@ -250,8 +265,10 @@
                 <div class="stat-item">Брил: <span id="diamonds">0</span>/10</div>
             </div>
         </div>
-        <!-- Кнопка гаманця в шапці гри, яка працює завжди -->
-        <button class="btn btn-ton" style="padding: 3px 10px; font-size: 11px; margin: 3px 0 0 0; width: auto;" onclick="openWalletModal()">💳 Гаманець</button>
+        <div class="header-bottom">
+            <span id="wallet-status-text">Гаманець не підключено</span>
+            <button class="btn-ton" onclick="openWalletModal()">🔗 Підключити гаманець</button>
+        </div>
     </header>
 
     <div class="center-stage">
@@ -266,17 +283,6 @@
     <div class="spin-btn-container">
         <button class="btn" id="spin-btn" onclick="spinWheel()">Крутити Колесо</button>
         <div class="spin-cost">Вартість прокруту: 10 Царів</div>
-    </div>
-
-    <!-- Стартове вікно (те саме, що працювало спочатку) -->
-    <div id="start-modal" class="modal">
-        <h2>👑 Ласкаво просимо, Царю!</h2>
-        <p>Вам нараховано <b>50 Царів</b>.<br>Кожен прокрут коштує <b>10 Царів</b>.<br>💎 <b>Діамант</b> = +30 Царів.<br><br>Підключіть гаманець для реєстрації гравця!</p>
-        
-        <button class="btn btn-ton" onclick="openWalletModal()">🔗 Підключити гаманець</button>
-        <div id="wallet-status">Статус: не підключено</div><br>
-        
-        <button class="btn" onclick="startGame()">Почати правління</button>
     </div>
 
     <div id="win-modal" class="modal hidden">
@@ -298,7 +304,7 @@
 
         let score = 50;
         let diamondsFound = 0;
-        let gameActive = false;
+        let gameActive = true;
         let currentRotation = 0;
         let winningBarrelIndex = 0;
         let barrelsData = [];
@@ -307,26 +313,36 @@
         const SPIN_COST = 10;
         const WIN_REWARD = 30;
 
-        // Ініціалізація TonConnectUI (той самий робочий код)
+        // Ініціалізація TonConnectUI
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://providnykzpoun-bit.github.io/Wallet/tonconnect-manifest.json'
         });
 
         // Відстеження підключення гаманця
         tonConnectUI.onStatusChange(wallet => {
-            const statusEl = document.getElementById('wallet-status');
+            const statusText = document.getElementById('wallet-status-text');
             if (wallet) {
                 const address = wallet.account.address;
                 const shortAddr = address.slice(0, 4) + '...' + address.slice(-4);
-                statusEl.innerText = 'Підключено: ' + shortAddr;
+                statusText.innerText = 'Гаманець: ' + shortAddr;
+                statusText.classList.add('connected');
             } else {
-                statusEl.innerText = 'Статус: не підключено';
+                statusText.innerText = 'Гаманець не підключено';
+                statusText.classList.remove('connected');
             }
         });
 
-        function openWalletModal() {
+        async function openWalletModal() {
             initAudio();
-            tonConnectUI.openModal();
+            try {
+                if (tonConnectUI.connected) {
+                    await tonConnectUI.disconnect();
+                } else {
+                    await tonConnectUI.openModal();
+                }
+            } catch (error) {
+                console.error("TonConnect error:", error);
+            }
         }
 
         function initAudio() {
@@ -391,9 +407,14 @@
             }
         }
 
+        // Запуск гри одразу при завантаженні сторінки
+        window.onload = function() {
+            startGame();
+        };
+
         function startGame() {
             initAudio();
-            document.getElementById('start-modal').classList.add('hidden');
+            document.getElementById('win-modal').classList.add('hidden');
             document.getElementById('gameover-modal').classList.add('hidden');
             score = 50;
             diamondsFound = 0;
@@ -403,8 +424,6 @@
         }
 
         function resetGame() {
-            document.getElementById('win-modal').classList.add('hidden');
-            document.getElementById('gameover-modal').classList.add('hidden');
             startGame();
         }
 
@@ -508,7 +527,8 @@
 
         function triggerGameOver() {
             gameActive = false;
-            document.getElementById('gameover-modal').classList.remove('hidden');
+            document.getElementById('gameover-modal').classList.add('hidden'); // залишаємо модалку або перегравання
+            resetGame();
         }
     </script>
 </body>
