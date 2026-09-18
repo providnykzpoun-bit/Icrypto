@@ -65,27 +65,45 @@
             color: #fff;
             font-weight: bold;
         }
-        .header-bottom {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            align-items: center;
-            border-top: 1px solid rgba(255, 215, 0, 0.3);
-            padding-top: 4px;
-        }
 
-        .center-stage {
+        /* Блок игрока и кошелька над короной */
+        .player-crown-stage {
             position: absolute;
-            top: 36%;
+            top: 32%;
             left: 50%;
             transform: translate(-50%, -50%);
             display: flex;
             flex-direction: column;
             align-items: center;
             z-index: 5;
+            width: 90%;
         }
+        .player-info-box {
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid #ffd700;
+            border-radius: 10px;
+            padding: 5px 12px;
+            margin-bottom: 8px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+            cursor: pointer;
+        }
+        .player-name {
+            font-size: 13px;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+        .wallet-action-text {
+            font-size: 10px;
+            color: #ff4d4d;
+        }
+        .wallet-action-text.connected {
+            color: #00ffcc;
+        }
+
         .crown {
-            font-size: 38px;
+            font-size: 34px;
             filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
             animation: pulseCrown 2s infinite ease-in-out;
         }
@@ -96,8 +114,8 @@
 
         .wheel-box {
             margin-top: 4px;
-            width: 85px;
-            height: 85px;
+            width: 75px;
+            height: 75px;
             border: 4px solid #ffd700;
             border-radius: 50%;
             background: conic-gradient(#8B4513 0deg 72deg, #b8860b 72deg 144deg, #5c2d0c 144deg 216deg, #8B4513 216deg 288deg, #b8860b 288deg 360deg);
@@ -109,21 +127,21 @@
             position: relative;
         }
         .wheel-center {
-            width: 26px;
-            height: 26px;
+            width: 24px;
+            height: 24px;
             background: #ffd700;
             border-radius: 50%;
             border: 2px solid #3d000c;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 11px;
+            font-size: 10px;
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
         }
 
         .barrels-container {
             position: absolute;
-            bottom: 150px;
+            bottom: 145px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -183,7 +201,7 @@
             text-shadow: 1px 1px 2px #000;
         }
 
-        /* Нижня фіксована панель для кнопок Обмін та Гаманець */
+        /* Нижня фіксована панель для кнопки Обмін */
         .bottom-action-bar {
             position: fixed;
             bottom: 0;
@@ -200,26 +218,17 @@
         .bottom-action-bar button {
             flex: 1;
             padding: 10px;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: bold;
             border-radius: 8px;
             border: 1px solid #ffd700;
             cursor: pointer;
             text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
         }
         .btn-exchange-main {
             background: linear-gradient(135deg, #00cc66 0%, #008844 100%);
             color: #fff;
             border-color: #00ffcc;
-        }
-        .btn-wallet-main {
-            background: linear-gradient(135deg, #0098EA 0%, #0066AA 100%);
-            color: #fff;
-            border-color: #4da6ff;
         }
 
         .modal {
@@ -274,14 +283,6 @@
         .hidden {
             display: none !important;
         }
-        #wallet-status-text {
-            font-size: 10px;
-            color: #ff4d4d;
-            font-weight: bold;
-        }
-        #wallet-status-text.connected {
-            color: #00ffcc;
-        }
     </style>
 </head>
 <body>
@@ -295,13 +296,14 @@
                 <div class="stat-item">Алмазы: <span id="diamonds">0</span>/10</div>
             </div>
         </div>
-        <div class="header-bottom">
-            <span>Статус:</span>
-            <span id="wallet-status-text">Не подключен</span>
-        </div>
     </header>
 
-    <div class="center-stage">
+    <!-- Блок над короной: Ник игрока + Управление кошельком -->
+    <div class="player-crown-stage">
+        <div class="player-info-box" onclick="openWalletModal()">
+            <div class="player-name" id="player-nickname">Игрок</div>
+            <div class="wallet-action-text" id="wallet-status-text">Нажмите, чтобы привязать кошелек</div>
+        </div>
         <div class="crown">👑</div>
         <div class="wheel-box" id="wheel">
             <div class="wheel-center">🎯</div>
@@ -315,10 +317,9 @@
         <div class="spin-cost">5 бочонков • 50% шанс на Царей</div>
     </div>
 
-    <!-- Нова фіксована нижня панель з кнопками Обмін та Кошелек -->
+    <!-- Фиксированная нижняя панель с кнопкой Обмена -->
     <div class="bottom-action-bar">
-        <button class="btn-exchange-main" onclick="exchangePointsToTsars()">🔄 Обміняти</button>
-        <button class="btn-wallet-main" onclick="openWalletModal()">💳 Кошелек</button>
+        <button class="btn-exchange-main" onclick="exchangePointsToTsars()">🔄 Обміняти бали</button>
     </div>
 
     <div id="win-modal" class="modal hidden">
@@ -338,6 +339,13 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+
+        // Автоматически подтягиваем ник игрока из Telegram
+        const user = tg.initDataUnsafe?.user;
+        if (user) {
+            const nickname = user.first_name + (user.last_name ? ' ' + user.last_name : '') || user.username || 'Игрок';
+            document.getElementById('player-nickname').innerText = nickname;
+        }
 
         let points = 100;
         let score = 0;
@@ -364,10 +372,10 @@
             if (wallet) {
                 const address = wallet.account.address;
                 const shortAddr = address.slice(0, 4) + '...' + address.slice(-4);
-                statusText.innerText = shortAddr;
+                statusText.innerText = 'Гаманець: ' + shortAddr + ' (Натисніть для відключення)';
                 statusText.classList.add('connected');
             } else {
-                statusText.innerText = 'Не подключен';
+                statusText.innerText = 'Нажмите, чтобы привязать кошелек';
                 statusText.classList.remove('connected');
             }
         });
@@ -473,99 +481,6 @@
             }
         }
 
-        function playSound(type) {
-            try {
-                initAudio();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-
-                let now = audioCtx.currentTime;
-                if (type === 'spin') {
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(300, now);
-                    osc.frequency.exponentialRampToValueAtTime(600, now + 1.2);
-                    gain.gain.setValueAtTime(0.2, now);
-                    gain.exponentialRampToValueAtTime(0.001, now + 1.2);
-                    osc.start(now);
-                    osc.stop(now + 1.2);
-                } else if (type === 'diamond') {
-                    osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(523.25, now);
-                    osc.frequency.setValueAtTime(659.25, now + 0.1);
-                    osc.frequency.setValueAtTime(783.99, now + 0.2);
-                    gain.gain.setValueAtTime(0.3, now);
-                    gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-                    osc.start(now);
-                    osc.stop(now + 0.5);
-                } else if (type === 'empty') {
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(150, now);
-                    osc.frequency.linearRampToValueAtTime(80, now + 0.3);
-                    gain.gain.setValueAtTime(0.3, now);
-                    gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-                    osc.start(now);
-                    osc.stop(now + 0.3);
-                }
-            } catch (e) {
-                console.log(e);
-            }
-        }
-
-        window.onload = function() {
-            startGame();
-        };
-
-        function startGame() {
-            initAudio();
-            document.getElementById('win-modal').classList.add('hidden');
-            document.getElementById('gameover-modal').classList.add('hidden');
-            points = 100;
-            score = 0;
-            diamondsFound = 0;
-            updateStats();
-            gameActive = true;
-            setupNewRound();
-        }
-
-        function resetGame() {
-            startGame();
-        }
-
-        function updateStats() {
-            document.getElementById('points').innerText = points;
-            document.getElementById('score').innerText = score;
-            document.getElementById('diamonds').innerText = diamondsFound;
-        }
-
-        function setupNewRound() {
-            const container = document.getElementById('barrels-container');
-            container.innerHTML = '';
-            
-            winningBarrelIndex = Math.floor(Math.random() * TOTAL_BARRELS);
-            barrelsData = Array.from({length: TOTAL_BARRELS}, (_, i) => (i === winningBarrelIndex));
-
-            for (let i = 0; i < TOTAL_BARRELS; i++) {
-                const barrel = document.createElement('div');
-                barrel.className = 'barrel';
-                barrel.id = 'barrel-' + i;
-                barrel.innerHTML = `
-                    <div class="barrel-rings ring-top"></div>
-                    <div class="barrel-content">?</div>
-                    <div class="barrel-rings ring-bottom"></div>
-                `;
-                container.appendChild(barrel);
-            }
-
-            if (points < SPIN_COST_POINTS) {
-                triggerGameOver();
-                return;
-            }
-
-            document.getElementById('spin-btn').disabled = false;
-        }
-
         function spinWheel() {
             if (!gameActive || points < SPIN_COST_POINTS) return;
             
@@ -575,7 +490,6 @@
             updateStats();
 
             document.getElementById('spin-btn').disabled = true;
-            playSound('spin');
 
             const sectorAngle = 360 / TOTAL_BARRELS;
             const extraSpins = 4 * 360;
@@ -608,8 +522,6 @@
                     if (Math.random() < 0.5) {
                         score += 5;
                     }
-
-                    playSound('diamond');
                     updateStats();
 
                     if (diamondsFound >= 10) {
@@ -618,7 +530,6 @@
                 } else {
                     contentDiv.innerHTML = '❌';
                     barrelEl.style.background = 'linear-gradient(135deg, #8a0000 0%, #3d0000 100%)';
-                    playSound('empty');
                     updateStats();
                 }
 
@@ -638,7 +549,32 @@
 
         function triggerGameOver() {
             gameActive = false;
-            document.getElementById('gameover-modal').classList.remove('hidden');
+            document.getElementById('gameover-modal').classList.add('hidden');
+        }
+
+        window.onload = function() {
+            startGame();
+        };
+
+        function startGame() {
+            document.getElementById('win-modal').classList.add('hidden');
+            document.getElementById('gameover-modal').classList.add('hidden');
+            points = 100;
+            score = 0;
+            diamondsFound = 0;
+            updateStats();
+            gameActive = true;
+            setupNewRound();
+        }
+
+        function resetGame() {
+            startGame();
+        }
+
+        function updateStats() {
+            document.getElementById('points').innerText = points;
+            document.getElementById('score').innerText = score;
+            document.getElementById('diamonds').innerText = diamondsFound;
         }
     </script>
 </body>
