@@ -313,7 +313,7 @@
 
     <div class="spin-btn-container">
         <button class="btn" id="spin-btn" onclick="spinWheel()">Крутить Колесо (10 баллов)</button>
-        <div class="spin-cost">5 бочонков • 50% шанс на Царей</div>
+        <div class="spin-cost">5 бочонков • Шанс найти сокровище</div>
     </div>
 
     <div class="bottom-action-bar">
@@ -322,9 +322,9 @@
     </div>
 
     <div id="win-modal" class="modal hidden">
-        <h2>🎉 Триумф! 🎉</h2>
-        <p>Вы собрали все 10 алмазов и доказали свою мудрость!</p>
-        <button class="btn" onclick="resetGame()">Новое царствование</button>
+        <h2>🎉 Великий Тріумф! 🎉</h2>
+        <p>Ви зібрали всі 10 алмазів! Нагорода: +50 балів та +10 Царів. Продовжуємо володарювання!</p>
+        <button class="btn" onclick="continueGameAfterWin()">Продовжити похід</button>
     </div>
 
     <div id="gameover-modal" class="modal hidden">
@@ -409,14 +409,13 @@
                     messages: [
                         {
                             address: MY_WALLET_ADDRESS, 
-                            amount: "1000000" // 0.001 TON
+                            amount: "1000000"
                         }
                     ]
                 };
 
                 await tonConnectUI.sendTransaction(transaction);
                 
-                // Исправлено: теперь при обмене списываются балы и добавляются Цари (+20)
                 points -= 50;
                 score += 20;
                 updateStats();
@@ -442,7 +441,7 @@
                     messages: [
                         {
                             address: MY_WALLET_ADDRESS, 
-                            amount: "1000000" // 0.001 TON
+                            amount: "1000000"
                         }
                     ]
                 };
@@ -509,9 +508,6 @@
                     points += WIN_REWARD_POINTS;
                     diamondsFound++;
                     
-                    if (Math.random() < 0.5) {
-                        score += 5;
-                    }
                     updateStats();
 
                     if (diamondsFound >= 10) {
@@ -534,12 +530,24 @@
 
         function triggerWin() {
             gameActive = false;
+            // Награда за збор 10 алмазов: +50 балов и +10 Царей
+            points += 50;
+            score += 10;
+            updateStats();
             document.getElementById('win-modal').classList.remove('hidden');
+        }
+
+        function continueGameAfterWin() {
+            diamondsFound = 0; // Сбрасываем счетчик алмазов для нового круга
+            updateStats();
+            document.getElementById('win-modal').classList.add('hidden');
+            gameActive = true;
+            setupNewRound();
         }
 
         function triggerGameOver() {
             gameActive = false;
-            document.getElementById('gameover-modal').classList.remove('hidden');
+            document.getElementById('gameover-modal').classList.add('hidden');
         }
 
         window.onload = function() {
@@ -572,7 +580,18 @@
             container.innerHTML = '';
             
             winningBarrelIndex = Math.floor(Math.random() * TOTAL_BARRELS);
-            barrelsData = Array.from({length: TOTAL_BARRELS}, (_, i) => (i === winningBarrelIndex));
+            
+            // Збалансовано шанс: тепер алмаз випадає лише у 40% випадків (а не завжди), іноді бочонки пусті
+            const luckChance = Math.random();
+            const hasDiamondThisRound = luckChance < 0.4; 
+
+            barrelsData = Array.from({length: TOTAL_BARRELS}, (_, i) => {
+                if (hasDiamondThisRound) {
+                    return i === winningBarrelIndex;
+                } else {
+                    return false; // Всі бочонки пусті у цьому раунді (додає азарту)
+                }
+            });
 
             for (let i = 0; i < TOTAL_BARRELS; i++) {
                 const barrel = document.createElement('div');
