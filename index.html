@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Царь — Колесо Фортуны</title>
+    <!-- Використовуємо інший стейбл-CDN для TonConnect UI -->
+    <script src="https://cdn.jsdelivr.net/npm/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -55,7 +57,7 @@
         .stats {
             display: flex;
             gap: 12px;
-            font-size: 15px;
+            font-size: 14px;
         }
         .stat-item span {
             color: #fff;
@@ -229,6 +231,9 @@
         .hidden {
             display: none !important;
         }
+        #wallet-container {
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
@@ -241,7 +246,8 @@
                 <div class="stat-item">Брил: <span id="diamonds">0</span>/10</div>
             </div>
         </div>
-        <button class="btn btn-ton" style="padding: 6px 12px; font-size: 13px; margin: 0; width: auto;" onclick="openWallet()">💳 Кошелек</button>
+        <!-- Місце куди TonConnect автоматично воткне кнопку підключення/статус -->
+        <div id="ton-connect-header"></div>
     </header>
 
     <div class="center-stage">
@@ -261,9 +267,9 @@
     <!-- Стартове вікно -->
     <div id="start-modal" class="modal">
         <h2>👑 Добро пожаловать, Царь!</h2>
-        <p>Вам начислено <b>50 Царей</b>.<br>Каждый прокрут стоит <b>10 Царей</b>.<br>💎 <b>Бриллиант</b> = +30 Царей.<br><br>Соберите 10 бриллиантов для победы!</p>
+        <p>Вам начислено <b>50 Царей</b>.<br>Каждый прокрут стоит <b>10 Царей</b>.<br>💎 <b>Бриллиант</b> = +30 Царей.<br><br>Подключите гаманець для реєстрації гравця!</p>
         
-        <button class="btn btn-ton" onclick="openWallet()">🔗 Подключить кошелек</button><br>
+        <div id="wallet-container"></div><br>
         <button class="btn" onclick="startGame()">Начать правление</button>
     </div>
 
@@ -275,8 +281,7 @@
 
     <div id="gameover-modal" class="modal hidden">
         <h2>⚠️ Казна пуста! ⚠️</h2>
-        <p>У вас закончились Цари. Пополните казну через TON-кошелек или начните заново.</p>
-        <button class="btn btn-ton" onclick="buyPointsWithTon()">💳 Купить 50 Царей за 0.001 TON</button><br>
+        <p>У вас закончились Цари.</p>
         <button class="btn" onclick="resetGame()">Сбросить игру</button>
     </div>
 
@@ -291,27 +296,38 @@
 
         const SPIN_COST = 10;
         const WIN_REWARD = 30;
-        const TARGET_WALLET = "UQDXq1iAqu88tVRG62_k03kAXELu_1gzRBMye-VZoFRIRtWw";
 
-        function openWallet() {
-            initAudio();
-            // Прямое открытие перевода через Tonkeeper / универсальную ссылку
-            const tonTransferUrl = `https://app.tonkeeper.com/transfer/${TARGET_WALLET}?amount=1000000&text=Buy_50_Czars`;
-            window.open(tonTransferUrl, '_blank');
-        }
+        let tonConnectUI = null;
 
-        function buyPointsWithTon() {
-            initAudio();
-            openWallet();
-            // Начисляем царей после возврата/клика
-            setTimeout(() => {
-                score += 50;
-                updateStats();
-                document.getElementById('gameover-modal').classList.add('hidden');
-                gameActive = true;
-                setupNewRound();
-            }, 1000);
-        }
+        // Ініціалізація TonConnect для реєстрації/підключення користувача
+        window.addEventListener('DOMContentLoaded', () => {
+            try {
+                if (typeof TonConnectUI !== 'undefined') {
+                    tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+                        manifestUrl: 'https://providnykzpoun-bit.github.io/lcrypto/tonconnect-manifest.json',
+                        buttonRootId: 'wallet-container'
+                    });
+
+                    // Також додаємо кнопку у шапку, якщо потрібно, або створюємо через UI
+                    tonConnectUI.uiOptions = {
+                        actionsConfiguration: {
+                            twaReturnUrl: 'https://t.me/your_bot_name/your_app'
+                        }
+                    };
+
+                    // Слухаємо зміну статусу підключення (реєстрація гравця)
+                    tonConnectUI.onStatusChange(wallet => {
+                        if (wallet) {
+                            console.log("Гравець зареєстрований/підключений:", wallet.account.address);
+                        } else {
+                            console.log("Гаманець відключено");
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error("Помилка TonConnectUI:", e);
+            }
+        });
 
         function initAudio() {
             if (!audioCtx) {
