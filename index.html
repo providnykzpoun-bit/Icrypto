@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Царь — Колесо Фортуны</title>
-    <!-- Підключаємо Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Підключаємо офіційний TonConnect UI SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
         * {
@@ -66,7 +64,6 @@
             font-weight: bold;
         }
 
-        /* Блок над короной: Ник игрока + Управление кошельком */
         .player-crown-stage {
             position: absolute;
             top: 34%;
@@ -113,30 +110,29 @@
             50% { transform: scale(1.08); }
         }
 
-        /* Увеличенное колесо */
         .wheel-box {
-            width: 110px;
-            height: 110px;
-            border: 4px solid #ffd700;
+            width: 120px;
+            height: 120px;
+            border: 5px solid #ffd700;
             border-radius: 50%;
             background: conic-gradient(#8B4513 0deg 72deg, #b8860b 72deg 144deg, #5c2d0c 144deg 216deg, #8B4513 216deg 288deg, #b8860b 288deg 360deg);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 25px rgba(255, 215, 0, 0.7);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
             transition: transform 1.5s cubic-bezier(0.15, 0.9, 0.2, 1);
             position: relative;
         }
         .wheel-center {
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             background: #ffd700;
             border-radius: 50%;
             border: 2px solid #3d000c;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 13px;
+            font-size: 14px;
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
         }
 
@@ -202,7 +198,6 @@
             text-shadow: 1px 1px 2px #000;
         }
 
-        /* Нижняя панель с двумя кнопками: Обмен и Купить */
         .bottom-action-bar {
             position: fixed;
             bottom: 0;
@@ -303,7 +298,6 @@
         </div>
     </header>
 
-    <!-- Блок над короной: Ник игрока + Управление кошельком -->
     <div class="player-crown-stage">
         <div class="player-info-box" onclick="openWalletModal()">
             <div class="player-name" id="player-nickname">Игрок</div>
@@ -322,7 +316,6 @@
         <div class="spin-cost">5 бочонков • 50% шанс на Царей</div>
     </div>
 
-    <!-- Фиксированная нижняя панель с двумя кнопками -->
     <div class="bottom-action-bar">
         <button class="btn-exchange-main" onclick="exchangePointsToTsars()">🔄 Обміняти</button>
         <button class="btn-buy-main" onclick="buyPointsWithTon()">💳 Купити бали</button>
@@ -411,16 +404,13 @@
             }
 
             try {
-                const userId = tg.initDataUnsafe?.user?.id || "unknown";
-                const comment = `EXCHANGE_TSARS_${userId}`;
-
+                // Упрощенная транзакция без тяжелого payload, чтобы кошелек не выдавал ошибку
                 const transaction = {
                     validUntil: Math.floor(Date.now() / 1000) + 600,
                     messages: [
                         {
                             address: MY_WALLET_ADDRESS, 
-                            amount: "1000000", 
-                            payload: btoa(comment)
+                            amount: "1000000" // 0.001 TON
                         }
                     ]
                 };
@@ -434,7 +424,7 @@
 
             } catch (error) {
                 console.error("Transaction cancelled or failed:", error);
-                alert("Обмін скасовано або недостатньо коштів на комісію в гаманці.");
+                alert("Обмін скасовано або сталася помилка транзакції в гаманці.");
             }
         }
 
@@ -447,16 +437,13 @@
             }
 
             try {
-                const userId = tg.initDataUnsafe?.user?.id || "unknown";
-                const comment = `BUY_POINTS_${userId}`;
-
+                // Чистый перевод 0.001 TON без параметров, стабильно работающий во всех кошельках
                 const transaction = {
                     validUntil: Math.floor(Date.now() / 1000) + 600,
                     messages: [
                         {
                             address: MY_WALLET_ADDRESS, 
-                            amount: "1000000", 
-                            payload: btoa(comment)
+                            amount: "1000000" // 0.001 TON
                         }
                     ]
                 };
@@ -472,7 +459,7 @@
 
             } catch (error) {
                 console.error("Transaction cancelled or failed:", error);
-                alert("Покупку скасовано або сталася помилка транзакції.");
+                alert("Покупку скасовано або сталася помилка транзакції в гаманці.");
             }
         }
 
@@ -553,7 +540,7 @@
 
         function triggerGameOver() {
             gameActive = false;
-            document.getElementById('gameover-modal').classList.add('hidden');
+            document.getElementById('gameover-modal').classList.remove('hidden');
         }
 
         window.onload = function() {
