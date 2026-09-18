@@ -404,7 +404,6 @@
             }
 
             try {
-                // Упрощенная транзакция без тяжелого payload, чтобы кошелек не выдавал ошибку
                 const transaction = {
                     validUntil: Math.floor(Date.now() / 1000) + 600,
                     messages: [
@@ -417,10 +416,11 @@
 
                 await tonConnectUI.sendTransaction(transaction);
                 
+                // Исправлено: теперь при обмене списываются балы и добавляются Цари (+20)
                 points -= 50;
-                score += 25;
+                score += 20;
                 updateStats();
-                alert("Успішно обміняно! +25 Царів додано в скарбницю.");
+                alert("Успішно обміняно! +20 Царів додано в скарбницю.");
 
             } catch (error) {
                 console.error("Transaction cancelled or failed:", error);
@@ -437,7 +437,6 @@
             }
 
             try {
-                // Чистый перевод 0.001 TON без параметров, стабильно работающий во всех кошельках
                 const transaction = {
                     validUntil: Math.floor(Date.now() / 1000) + 600,
                     messages: [
