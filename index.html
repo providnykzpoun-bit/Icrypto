@@ -65,22 +65,6 @@
             color: #fff;
             font-weight: bold;
         }
-        .header-bottom {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            align-items: center;
-            border-top: 1px solid rgba(255, 215, 0, 0.3);
-            padding-top: 4px;
-            font-size: 11px;
-        }
-        #wallet-mini-status {
-            color: #ff4d4d;
-            font-weight: bold;
-        }
-        #wallet-mini-status.connected {
-            color: #00ffcc;
-        }
 
         .center-stage {
             position: absolute;
@@ -246,18 +230,13 @@
             width: 100%;
             max-width: 260px;
         }
-        .btn-mini {
-            background: linear-gradient(135deg, #0098EA 0%, #0066AA 100%);
-            color: #fff;
-            border: none;
-            padding: 3px 8px;
-            font-size: 10px;
-            font-weight: bold;
-            border-radius: 6px;
-            cursor: pointer;
-        }
         .hidden {
             display: none !important;
+        }
+        #wallet-status {
+            font-size: 12px;
+            color: #00ffcc;
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -271,10 +250,8 @@
                 <div class="stat-item">Брил: <span id="diamonds">0</span>/10</div>
             </div>
         </div>
-        <div class="header-bottom">
-            <span id="wallet-mini-status">Гаманець не підключено</span>
-            <button class="btn-mini" onclick="openWalletModal()">💳 Гаманець</button>
-        </div>
+        <!-- Кнопка гаманця в шапці гри, яка працює завжди -->
+        <button class="btn btn-ton" style="padding: 3px 10px; font-size: 11px; margin: 3px 0 0 0; width: auto;" onclick="openWalletModal()">💳 Гаманець</button>
     </header>
 
     <div class="center-stage">
@@ -291,12 +268,13 @@
         <div class="spin-cost">Вартість прокруту: 10 Царів</div>
     </div>
 
-    <!-- Стартове вікно -->
+    <!-- Стартове вікно (те саме, що працювало спочатку) -->
     <div id="start-modal" class="modal">
         <h2>👑 Ласкаво просимо, Царю!</h2>
         <p>Вам нараховано <b>50 Царів</b>.<br>Кожен прокрут коштує <b>10 Царів</b>.<br>💎 <b>Діамант</b> = +30 Царів.<br><br>Підключіть гаманець для реєстрації гравця!</p>
         
-        <button class="btn btn-ton" onclick="openWalletModal()">🔗 Підключити гаманець</button><br><br>
+        <button class="btn btn-ton" onclick="openWalletModal()">🔗 Підключити гаманець</button>
+        <div id="wallet-status">Статус: не підключено</div><br>
         
         <button class="btn" onclick="startGame()">Почати правління</button>
     </div>
@@ -329,22 +307,20 @@
         const SPIN_COST = 10;
         const WIN_REWARD = 30;
 
-        // Ініціалізація TonConnectUI із правильним маніфестом
+        // Ініціалізація TonConnectUI (той самий робочий код)
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
             manifestUrl: 'https://providnykzpoun-bit.github.io/Wallet/tonconnect-manifest.json'
         });
 
-        // Відстеження підключення гаманця гравця
+        // Відстеження підключення гаманця
         tonConnectUI.onStatusChange(wallet => {
-            const statusEl = document.getElementById('wallet-mini-status');
+            const statusEl = document.getElementById('wallet-status');
             if (wallet) {
                 const address = wallet.account.address;
                 const shortAddr = address.slice(0, 4) + '...' + address.slice(-4);
-                statusEl.innerText = 'Гаманець: ' + shortAddr;
-                statusEl.classList.add('connected');
+                statusEl.innerText = 'Підключено: ' + shortAddr;
             } else {
-                statusEl.innerText = 'Гаманець не підключено';
-                statusEl.classList.remove('connected');
+                statusEl.innerText = 'Статус: не підключено';
             }
         });
 
@@ -513,7 +489,6 @@
                     barrelEl.style.background = 'linear-gradient(135deg, #8a0000 0%, #3d0000 100%)';
                     playSound('empty');
                     updateStats();
-
                 }
 
                 setTimeout(() => {
