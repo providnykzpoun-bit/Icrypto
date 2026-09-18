@@ -482,7 +482,7 @@
             document.getElementById('gameover-modal').classList.remove('hidden');
         }
 
-        // Покупка баллов за 0.001 TON через кошелек
+        // Покупка баллов за 0.001 TON на ваш кошелек
         async function buyPointsWithTon() {
             try {
                 if (!tonConnectUI.connected) {
@@ -490,13 +490,13 @@
                     return;
                 }
 
-                // 0.001 TON в нанотелях (1 TON = 1,000,000,000 наноTON)
+                // 0.001 TON = 1,000,000 наноTON
                 const transaction = {
                     validUntil: Math.floor(Date.now() / 1000) + 300,
                     messages: [
                         {
-                            address: "UQD_YOUR_WALLET_ADDRESS_HERE", // Укажіть сюди ваш адрес кошелька TON для отримання коштів
-                            amount: "1000000" // 0.001 TON
+                            address: "UQDXq1iAqu88tVRG62_k03kAXELu_1gzRBMye-VZoFRIRtWw",
+                            amount: "1000000"
                         }
                     ]
                 };
