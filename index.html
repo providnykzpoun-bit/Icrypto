@@ -32,7 +32,7 @@
             text-align: center;
             z-index: 10;
             background: rgba(0, 0, 0, 0.9);
-            padding: 6px 10px;
+            padding: 8px 12px;
             border-radius: 12px;
             border: 2px solid #ffd700;
             box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
@@ -58,7 +58,7 @@
         }
         .stats {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             font-size: 11px;
         }
         .stat-item span {
@@ -72,7 +72,6 @@
             align-items: center;
             border-top: 1px solid rgba(255, 215, 0, 0.3);
             padding-top: 4px;
-            gap: 4px;
         }
 
         .center-stage {
@@ -124,7 +123,7 @@
 
         .barrels-container {
             position: absolute;
-            bottom: 95px;
+            bottom: 150px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -170,7 +169,7 @@
 
         .spin-btn-container {
             position: absolute;
-            bottom: 12px;
+            bottom: 65px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 15;
@@ -182,6 +181,45 @@
             color: #ffcccc;
             margin-top: 2px;
             text-shadow: 1px 1px 2px #000;
+        }
+
+        /* Нижня фіксована панель для кнопок Обмін та Гаманець */
+        .bottom-action-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(15, 5, 8, 0.95);
+            padding: 8px 12px;
+            display: flex;
+            gap: 10px;
+            z-index: 20;
+            border-top: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.8);
+        }
+        .bottom-action-bar button {
+            flex: 1;
+            padding: 10px;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 8px;
+            border: 1px solid #ffd700;
+            cursor: pointer;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .btn-exchange-main {
+            background: linear-gradient(135deg, #00cc66 0%, #008844 100%);
+            color: #fff;
+            border-color: #00ffcc;
+        }
+        .btn-wallet-main {
+            background: linear-gradient(135deg, #0098EA 0%, #0066AA 100%);
+            color: #fff;
+            border-color: #4da6ff;
         }
 
         .modal {
@@ -233,32 +271,13 @@
             cursor: not-allowed;
             transform: none !important;
         }
-        .btn-ton {
-            background: linear-gradient(135deg, #0098EA 0%, #0066AA 100%);
-            color: #fff;
-            padding: 3px 8px;
-            font-size: 10px;
-            border-radius: 5px;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .btn-exchange {
-            background: linear-gradient(135deg, #00cc66 0%, #008844 100%);
-            color: #fff;
-            padding: 3px 6px;
-            font-size: 9px;
-            border-radius: 5px;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-        }
         .hidden {
             display: none !important;
         }
         #wallet-status-text {
-            font-size: 9px;
+            font-size: 10px;
             color: #ff4d4d;
+            font-weight: bold;
         }
         #wallet-status-text.connected {
             color: #00ffcc;
@@ -277,9 +296,8 @@
             </div>
         </div>
         <div class="header-bottom">
+            <span>Статус:</span>
             <span id="wallet-status-text">Не подключен</span>
-            <button class="btn-exchange" onclick="exchangePointsToTsars()">🔄 Обмен</button>
-            <button class="btn-ton" onclick="openWalletModal()">💳 Кошелек</button>
         </div>
     </header>
 
@@ -295,6 +313,12 @@
     <div class="spin-btn-container">
         <button class="btn" id="spin-btn" onclick="spinWheel()">Крутить Колесо (10 баллов)</button>
         <div class="spin-cost">5 бочонков • 50% шанс на Царей</div>
+    </div>
+
+    <!-- Нова фіксована нижня панель з кнопками Обмін та Кошелек -->
+    <div class="bottom-action-bar">
+        <button class="btn-exchange-main" onclick="exchangePointsToTsars()">🔄 Обміняти</button>
+        <button class="btn-wallet-main" onclick="openWalletModal()">💳 Кошелек</button>
     </div>
 
     <div id="win-modal" class="modal hidden">
@@ -326,7 +350,7 @@
 
         const SPIN_COST_POINTS = 10;
         const WIN_REWARD_POINTS = 20;
-        TOTAL_BARRELS = 5;
+        const TOTAL_BARRELS = 5;
 
         // Ваш реальный адрес кошелька:
         const MY_WALLET_ADDRESS = "UQDXq1iAqu88tVRG62_k03kAXELu_1gzRBMye-VZoFRIRtWw";
