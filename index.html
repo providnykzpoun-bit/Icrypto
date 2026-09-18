@@ -55,7 +55,7 @@
         /* Центральная зона с короной */
         .center-stage {
             position: absolute;
-            top: 50%;
+            top: 45%;
             left: 50%;
             transform: translate(-50%, -50%);
             display: flex;
@@ -146,7 +146,7 @@
             100% { opacity: 0; transform: translateY(-70px) scale(1.2); }
         }
 
-        /* Модальные окна (Победа / Начало) */
+        /* Модальные окна */
         .modal {
             position: fixed;
             top: 0;
@@ -207,7 +207,7 @@
 
     <div class="center-stage">
         <div class="crown">👑</div>
-        <div class="throne-text">Трон Царя<br><small>Ищите бриллианты в бочках!</small></div>
+        <div class="throne-text">Трон Царя<br><small>Ловите бочонки снизу!</small></div>
     </div>
 
     <div id="game-field"></div>
@@ -215,7 +215,7 @@
     <!-- Модальное окно старта -->
     <div id="start-modal" class="modal">
         <h2>👑 Добро пожаловать, Царь!</h2>
-        <p>Снизу поплывут бочонки со знаками вопроса. Нажимайте на них:<br>💎 <b>Бриллиант</b> = +10 Царей<br>❌ <b>Пусто</b> = -5 Царей<br><br>Соберите 10 бриллиантов для победы!</p>
+        <p>Внизу экрана из стороны в сторону будут проезжать бочонки. Нажимайте на них:<br>💎 <b>Бриллиант</b> = +10 Царей<br>❌ <b>Пусто</b> = -5 Царей<br><br>Соберите 10 бриллиантов для победы!</p>
         <button class="btn" onclick="startGame()">Начать правление</button>
     </div>
 
@@ -246,17 +246,15 @@
 
             let now = audioCtx.currentTime;
             if (type === 'diamond') {
-                // Победный звонкий аккорд
                 osc.type = 'triangle';
-                osc.frequency.setValueAtTime(523.25, now); // C5
-                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
-                osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.setValueAtTime(659.25, now + 0.1);
+                osc.frequency.setValueAtTime(783.99, now + 0.2);
                 gain.gain.setValueAtTime(0.3, now);
                 gain.exponentialRampToValueAtTime(0.001, now + 0.5);
                 osc.start(now);
                 osc.stop(now + 0.5);
             } else if (type === 'empty') {
-                // Глухой звук ошибки
                 osc.type = 'sawtooth';
                 osc.frequency.setValueAtTime(150, now);
                 osc.frequency.linearRampToValueAtTime(80, now + 0.3);
@@ -265,7 +263,6 @@
                 osc.start(now);
                 osc.stop(now + 0.3);
             } else if (type === 'win') {
-                // Мелодия победы
                 let notes = [440, 554.37, 659.25, 880];
                 notes.forEach((freq, index) => {
                     let o = audioCtx.createOscillator();
@@ -289,7 +286,7 @@
             gameActive = true;
             
             if (spawnInterval) clearInterval(spawnInterval);
-            spawnInterval = setInterval(createBarrel, 1300);
+            spawnInterval = setInterval(createBarrel, 1600);
         }
 
         function resetGame() {
@@ -310,11 +307,14 @@
             const barrel = document.createElement('div');
             barrel.className = 'barrel';
 
-            // Случайная позиция по горизонтали (с отступами от краев)
-            const maxX = window.innerWidth - 80;
-            const randomX = Math.floor(Math.random() * (maxX - 40)) + 20;
-            barrel.style.left = randomX + 'px';
-            barrel.style.bottom = '-100px';
+            // Фиксированная линия движения в нижней части экрана
+            const bottomPosition = 80; 
+            barrel.style.bottom = bottomPosition + 'px';
+
+            // Случайный выбор направления: слева-направо или справа-налево
+            const movingRight = Math.random() < 0.5;
+            let currentX = movingRight ? -90 : window.innerWidth + 10;
+            barrel.style.left = currentX + 'px';
 
             barrel.innerHTML = `
                 <div class="barrel-rings ring-top"></div>
@@ -322,7 +322,7 @@
                 <div class="barrel-rings ring-bottom"></div>
             `;
 
-            // Шанс выпадения бриллианта (например, 45%)
+            // Шанс выпадения бриллианта (45%)
             const hasDiamond = Math.random() < 0.45;
 
             barrel.addEventListener('pointerdown', (e) => {
@@ -350,19 +350,28 @@
 
             field.appendChild(barrel);
 
-            // Анимация движения снизу вверх
-            let currentBottom = -100;
-            const speed = 2 + Math.random() * 1.5; // Случайная скорость
+            // Скорость движения по горизонтали
+            const speed = 2.5 + Math.random() * 1.5;
 
             function moveBarrel() {
                 if (!barrel.parentNode) return;
-                currentBottom += speed;
-                barrel.style.bottom = currentBottom + 'px';
 
-                if (currentBottom > window.innerHeight + 100) {
-                    barrel.remove();
+                if (movingRight) {
+                    currentX += speed;
+                    barrel.style.left = currentX + 'px';
+                    if (currentX > window.innerWidth + 100) {
+                        barrel.remove();
+                    } else {
+                        requestAnimationFrame(moveBarrel);
+                    }
                 } else {
-                    requestAnimationFrame(moveBarrel);
+                    currentX -= speed;
+                    barrel.style.left = currentX + 'px';
+                    if (currentX < -100) {
+                        barrel.remove();
+                    } else {
+                        requestAnimationFrame(moveBarrel);
+                    }
                 }
             }
             requestAnimationFrame(moveBarrel);
