@@ -250,7 +250,7 @@
                 <div class="stat-item">Брил: <span id="diamonds">0</span>/10</div>
             </div>
         </div>
-        <!-- Сюда встроится официальное меню выбора кошельков TonConnect -->
+        <!-- Блок для кнопки TonConnect -->
         <div id="ton-connect-button"></div>
     </header>
 
@@ -300,7 +300,7 @@
         const WIN_REWARD = 30;
         const TARGET_WALLET = "UQDXq1iAqu88tVRG62_k03kAXELu_1gzRBMye-VZoFRIRtWw";
 
-        // Виправлена ініціалізація TonConnect UI
+        // Ініціалізація TonConnect UI з прив'язкою до ID елемента
         const tonConnectUI = new TonConnectUI({
             manifestUrl: 'https://providnykzpoun-bit.github.io/lcrypto/tonconnect-manifest.json',
             uiPreferences: {
@@ -464,7 +464,6 @@
 
                     if (diamondsFound >= 10) {
                         triggerWin();
-                        return;
                     }
                 } else {
                     contentDiv.innerHTML = '❌';
@@ -490,7 +489,6 @@
 
         function triggerGameOver() {
             gameActive = false;
-            document.getElementById('gameover-modal').classList.add('hidden');
             document.getElementById('gameover-modal').classList.remove('hidden');
         }
 
@@ -508,19 +506,18 @@
                         ]
                     };
                     await tonConnectUI.sendTransaction(transaction);
+                    score += 50;
+                    updateStats();
+                    document.getElementById('gameover-modal').classList.add('hidden');
+                    gameActive = true;
+                    setupNewRound();
                 } else {
-                    const payUrl = `https://app.tonkeeper.com/transfer/${TARGET_WALLET}?amount=1000000&text=Buy%20Tsars`;
-                    window.open(payUrl, '_blank');
+                    // Якщо гаманець не підключено через UI, відкриваємо модальне вікно підключення
+                    await tonConnectUI.openModal();
                 }
             } catch (e) {
                 console.log(e);
             }
-
-            score += 50;
-            updateStats();
-            document.getElementById('gameover-modal').classList.add('hidden');
-            gameActive = true;
-            setupNewRound();
         }
     </script>
 </body>
