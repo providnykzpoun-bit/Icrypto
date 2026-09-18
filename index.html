@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Царь — Колесо Фортуны</title>
-    <!-- Використовуємо інший стейбл-CDN для TonConnect UI -->
+    <!-- Підключаємо офіційний TonConnect UI SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
         * {
@@ -231,8 +231,10 @@
         .hidden {
             display: none !important;
         }
-        #wallet-container {
-            margin: 10px 0;
+        #wallet-status {
+            font-size: 12px;
+            color: #00ffcc;
+            margin-top: 5px;
         }
     </style>
 </head>
@@ -246,8 +248,7 @@
                 <div class="stat-item">Брил: <span id="diamonds">0</span>/10</div>
             </div>
         </div>
-        <!-- Місце куди TonConnect автоматично воткне кнопку підключення/статус -->
-        <div id="ton-connect-header"></div>
+        <button class="btn btn-ton" style="padding: 5px 10px; font-size: 12px; margin: 2px 0 0 0; width: auto;" onclick="openWalletModal()">💳 Гаманець</button>
     </header>
 
     <div class="center-stage">
@@ -267,9 +268,12 @@
     <!-- Стартове вікно -->
     <div id="start-modal" class="modal">
         <h2>👑 Добро пожаловать, Царь!</h2>
-        <p>Вам начислено <b>50 Царей</b>.<br>Каждый прокрут стоит <b>10 Царей</b>.<br>💎 <b>Бриллиант</b> = +30 Царей.<br><br>Подключите гаманець для реєстрації гравця!</p>
+        <p>Вам начислено <b>50 Царей</b>.<br>Каждый прокрут стоит <b>10 Царей</b>.<br>💎 <b>Бриллиант</b> = +30 Царей.<br><br>Підключіть гаманець для реєстрації гравця!</p>
         
-        <div id="wallet-container"></div><br>
+        <!-- Гарантована кнопка підключення -->
+        <button class="btn btn-ton" onclick="openWalletModal()">🔗 Подключить кошелек</button>
+        <div id="wallet-status">Статус: не підключено</div><br>
+        
         <button class="btn" onclick="startGame()">Начать правление</button>
     </div>
 
@@ -299,35 +303,39 @@
 
         let tonConnectUI = null;
 
-        // Ініціалізація TonConnect для реєстрації/підключення користувача
+        // Ініціалізація TonConnect
         window.addEventListener('DOMContentLoaded', () => {
             try {
                 if (typeof TonConnectUI !== 'undefined') {
-                    tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-                        manifestUrl: 'https://providnykzpoun-bit.github.io/lcrypto/tonconnect-manifest.json',
-                        buttonRootId: 'wallet-container'
+                    tonConnectUI = new TonConnectUI({
+                        manifestUrl: 'https://providnykzpoun-bit.github.io/lcrypto/tonconnect-manifest.json'
                     });
 
-                    // Також додаємо кнопку у шапку, якщо потрібно, або створюємо через UI
-                    tonConnectUI.uiOptions = {
-                        actionsConfiguration: {
-                            twaReturnUrl: 'https://t.me/your_bot_name/your_app'
-                        }
-                    };
-
-                    // Слухаємо зміну статусу підключення (реєстрація гравця)
+                    // Відстеження підключення гаманця гравця
                     tonConnectUI.onStatusChange(wallet => {
                         if (wallet) {
-                            console.log("Гравець зареєстрований/підключений:", wallet.account.address);
+                            const address = wallet.account.address;
+                            const shortAddr = address.slice(0, 4) + '...' + address.slice(-4);
+                            document.getElementById('wallet-status').innerText = 'Підключено: ' + shortAddr;
+                            console.log("Гаманець підключено:", address);
                         } else {
-                            console.log("Гаманець відключено");
+                            document.getElementById('wallet-status').innerText = 'Статус: не підключено';
                         }
                     });
                 }
             } catch (e) {
-                console.error("Помилка TonConnectUI:", e);
+                console.error("Помилка TonConnect:", e);
             }
         });
+
+        function openWalletModal() {
+            initAudio();
+            if (tonConnectUI) {
+                tonConnectUI.openModal();
+            } else {
+                alert("TonConnect ініціалізується, спробуйте ще раз за секунду.");
+            }
+        }
 
         function initAudio() {
             if (!audioCtx) {
