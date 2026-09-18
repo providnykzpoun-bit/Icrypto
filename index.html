@@ -55,7 +55,7 @@
         /* Центральная зона с короной */
         .center-stage {
             position: absolute;
-            top: 45%;
+            top: 40%;
             left: 50%;
             transform: translate(-50%, -50%);
             display: flex;
@@ -84,66 +84,54 @@
             text-align: center;
         }
 
-        /* Игровое поле для бочонков */
-        #game-field {
+        /* Зона для выбора бочонков снизу */
+        .barrels-container {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: 2;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 10;
         }
 
         /* Бочонок */
         .barrel {
-            position: absolute;
-            width: 70px;
-            height: 85px;
+            width: 85px;
+            height: 105px;
             background: linear-gradient(135deg, #8B4513 0%, #5c2d0c 100%);
             border: 3px solid #ffd700;
-            border-radius: 12px;
+            border-radius: 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.6);
-            transition: transform 0.1s;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.7);
+            transition: transform 0.15s, background 0.3s;
+            position: relative;
+        }
+        .barrel:hover {
+            transform: scale(1.05);
         }
         .barrel:active {
-            transform: scale(0.9);
+            transform: scale(0.95);
         }
         .barrel-rings {
             position: absolute;
             width: 100%;
-            height: 8px;
+            height: 9px;
             background: #b8860b;
             box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
         }
-        .ring-top { top: 15px; }
-        .ring-bottom { bottom: 15px; }
-        .question-mark {
+        .ring-top { top: 18px; }
+        .ring-bottom { bottom: 18px; }
+        .barrel-content {
             font-size: 38px;
             font-weight: bold;
             color: #ffd700;
             text-shadow: 2px 2px 2px #000;
             z-index: 3;
-        }
-
-        /* Всплывающие сообщения о выигрыше/проигрыше */
-        .floating-text {
-            position: absolute;
-            font-size: 22px;
-            font-weight: bold;
-            animation: floatUp 0.8s forwards ease-out;
-            pointer-events: none;
-            z-index: 20;
-            text-shadow: 2px 2px 4px #000;
-        }
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0) scale(0.8); }
-            100% { opacity: 0; transform: translateY(-70px) scale(1.2); }
         }
 
         /* Модальные окна */
@@ -207,15 +195,16 @@
 
     <div class="center-stage">
         <div class="crown">👑</div>
-        <div class="throne-text">Трон Царя<br><small>Ловите бочонки снизу!</small></div>
+        <div class="throne-text">Трон Царя<br><small>Выберите бочонок снизу!</small></div>
     </div>
 
-    <div id="game-field"></div>
+    <!-- Контейнер для 3 бочонков -->
+    <div class="barrels-container" id="barrels-container"></div>
 
     <!-- Модальное окно старта -->
     <div id="start-modal" class="modal">
         <h2>👑 Добро пожаловать, Царь!</h2>
-        <p>Внизу экрана из стороны в сторону будут проезжать бочонки. Нажимайте на них:<br>💎 <b>Бриллиант</b> = +10 Царей<br>❌ <b>Пусто</b> = -5 Царей<br><br>Соберите 10 бриллиантов для победы!</p>
+        <p>Перед вами царские бочонки. Выбирайте один из них:<br>💎 <b>Бриллиант</b> = +10 Царей<br>❌ <b>Пусто</b> = -5 Царей<br><br>Соберите 10 бриллиантов для победы!</p>
         <button class="btn" onclick="startGame()">Начать правление</button>
     </div>
 
@@ -230,7 +219,7 @@
         let score = 0;
         let diamondsFound = 0;
         let gameActive = false;
-        let spawnInterval = null;
+        let canClick = true;
 
         // Аудиоэффекты через Web Audio API
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -284,14 +273,11 @@
             diamondsFound = 0;
             updateStats();
             gameActive = true;
-            
-            if (spawnInterval) clearInterval(spawnInterval);
-            spawnInterval = setInterval(createBarrel, 1600);
+            spawnBarrels();
         }
 
         function resetGame() {
             document.getElementById('win-modal').classList.add('hidden');
-            document.getElementById('game-field').innerHTML = '';
             startGame();
         }
 
@@ -300,103 +286,66 @@
             document.getElementById('diamonds').innerText = diamondsFound;
         }
 
-        function createBarrel() {
+        function spawnBarrels() {
             if (!gameActive) return;
+            canClick = true;
+            const container = document.getElementById('barrels-container');
+            container.innerHTML = '';
 
-            const field = document.getElementById('game-field');
-            const barrel = document.createElement('div');
-            barrel.className = 'barrel';
+            // Определяем, в каком из 3 бочонков будет спрятан бриллиант (случайно от 0 до 2)
+            const winningIndex = Math.floor(Math.random() * 3);
 
-            // Фиксированная линия движения в нижней части экрана
-            const bottomPosition = 80; 
-            barrel.style.bottom = bottomPosition + 'px';
+            for (let i = 0; i < 3; i++) {
+                const barrel = document.createElement('div');
+                barrel.className = 'barrel';
+                barrel.innerHTML = `
+                    <div class="barrel-rings ring-top"></div>
+                    <div class="barrel-content">?</div>
+                    <div class="barrel-rings ring-bottom"></div>
+                `;
 
-            // Случайный выбор направления: слева-направо или справа-налево
-            const movingRight = Math.random() < 0.5;
-            let currentX = movingRight ? -90 : window.innerWidth + 10;
-            barrel.style.left = currentX + 'px';
+                const hasDiamond = (i === winningIndex);
 
-            barrel.innerHTML = `
-                <div class="barrel-rings ring-top"></div>
-                <div class="question-mark">?</div>
-                <div class="barrel-rings ring-bottom"></div>
-            `;
+                barrel.addEventListener('click', () => {
+                    if (!canClick || !gameActive) return;
+                    canClick = false;
 
-            // Шанс выпадения бриллианта (45%)
-            const hasDiamond = Math.random() < 0.45;
+                    const contentDiv = barrel.querySelector('.barrel-content');
 
-            barrel.addEventListener('pointerdown', (e) => {
-                e.stopPropagation();
-                if (!gameActive) return;
+                    if (hasDiamond) {
+                        contentDiv.innerHTML = '💎';
+                        barrel.style.background = 'linear-gradient(135deg, #005c8a 0%, #002b3d 100%)';
+                        score += 10;
+                        diamondsFound++;
+                        playSound('diamond');
+                        updateStats();
 
-                const rect = barrel.getBoundingClientRect();
-                showFloatingText(rect.left + 25, rect.top, hasDiamond);
-
-                if (hasDiamond) {
-                    score += 10;
-                    diamondsFound++;
-                    playSound('diamond');
-                    if (diamondsFound >= 10) {
-                        triggerWin();
-                    }
-                } else {
-                    score -= 5;
-                    playSound('empty');
-                }
-
-                updateStats();
-                barrel.remove();
-            });
-
-            field.appendChild(barrel);
-
-            // Скорость движения по горизонтали
-            const speed = 2.5 + Math.random() * 1.5;
-
-            function moveBarrel() {
-                if (!barrel.parentNode) return;
-
-                if (movingRight) {
-                    currentX += speed;
-                    barrel.style.left = currentX + 'px';
-                    if (currentX > window.innerWidth + 100) {
-                        barrel.remove();
+                        if (diamondsFound >= 10) {
+                            triggerWin();
+                            return;
+                        }
                     } else {
-                        requestAnimationFrame(moveBarrel);
+                        contentDiv.innerHTML = '❌';
+                        barrel.style.background = 'linear-gradient(135deg, #8a0000 0%, #3d0000 100%)';
+                        score -= 5;
+                        playSound('empty');
+                        updateStats();
                     }
-                } else {
-                    currentX -= speed;
-                    barrel.style.left = currentX + 'px';
-                    if (currentX < -100) {
-                        barrel.remove();
-                    } else {
-                        requestAnimationFrame(moveBarrel);
-                    }
-                }
-            }
-            requestAnimationFrame(moveBarrel);
-        }
 
-        function showFloatingText(x, y, isDiamond) {
-            const el = document.createElement('div');
-            el.className = 'floating-text';
-            if (isDiamond) {
-                el.style.color = '#00ffff';
-                el.innerText = '💎 +10 Царей!';
-            } else {
-                el.style.color = '#ff4d4d';
-                el.innerText = '❌ -5 Царей';
-            }
-            el.style.left = x + 'px';
-            el.style.top = y + 'px';
-            document.body.appendChild(el);
+                    // Через 1.2 секунды автоматически создаем новую тройку бочонков
+                    setTimeout(() => {
+                        if (gameActive) {
+                            spawnBarrels();
+                        }
+                    }, 1200);
+                });
 
-            setTimeout(() => el.remove(), 800);
+                container.appendChild(barrel);
+            }
         }
 
         function triggerWin() {
             gameActive = false;
-            clearInterval(spawnInterval);
             playSound('win');
             document.getElementById('win-modal').classList.remove('hidden');
         }
