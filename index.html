@@ -26,18 +26,18 @@
             justify-content: space-between;
         }
         header {
-            margin-top: 6px;
+            margin-top: 4px;
             text-align: center;
             z-index: 10;
             background: rgba(0, 0, 0, 0.9);
-            padding: 6px 10px;
-            border-radius: 12px;
+            padding: 4px 8px;
+            border-radius: 10px;
             border: 2px solid #ffd700;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            gap: 2px;
             width: 96%;
             max-width: 400px;
         }
@@ -49,15 +49,15 @@
         }
         h1 {
             margin: 0;
-            font-size: 14px;
+            font-size: 13px;
             text-transform: uppercase;
             letter-spacing: 1px;
             text-shadow: 2px 2px 4px #000;
         }
         .stats {
             display: flex;
-            gap: 6px;
-            font-size: 11px;
+            gap: 5px;
+            font-size: 10px;
         }
         .stat-item span {
             color: #fff;
@@ -66,7 +66,7 @@
 
         .player-crown-stage {
             position: absolute;
-            top: 34%;
+            top: 31%;
             left: 50%;
             transform: translate(-50%, -50%);
             display: flex;
@@ -78,21 +78,21 @@
         .player-info-box {
             background: rgba(0, 0, 0, 0.85);
             border: 1px solid #ffd700;
-            border-radius: 10px;
-            padding: 4px 10px;
-            margin-bottom: 6px;
+            border-radius: 8px;
+            padding: 3px 8px;
+            margin-bottom: 4px;
             text-align: center;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
             cursor: pointer;
         }
         .player-name {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             color: #fff;
-            margin-bottom: 2px;
+            margin-bottom: 1px;
         }
         .wallet-action-text {
-            font-size: 9px;
+            font-size: 8px;
             color: #ff4d4d;
         }
         .wallet-action-text.connected {
@@ -100,8 +100,8 @@
         }
 
         .crown {
-            font-size: 32px;
-            filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.8));
+            font-size: 28px;
+            filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.8));
             animation: pulseCrown 2s infinite ease-in-out;
             margin-bottom: 2px;
         }
@@ -110,35 +110,61 @@
             50% { transform: scale(1.08); }
         }
 
+        /* Кнопки персонажей-подсказок под коронкой */
+        .advisors-bar {
+            display: flex;
+            gap: 6px;
+            margin-top: 4px;
+        }
+        .advisor-btn {
+            background: rgba(20, 10, 15, 0.9);
+            border: 1px solid #ffd700;
+            border-radius: 6px;
+            padding: 3px 6px;
+            font-size: 9px;
+            color: #ffd700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            box-shadow: 0 0 5px rgba(255, 215, 0, 0.2);
+            transition: 0.2s;
+        }
+        .advisor-btn:hover {
+            background: rgba(60, 20, 30, 0.9);
+            transform: scale(1.03);
+        }
+
         .wheel-box {
-            width: 120px;
-            height: 120px;
-            border: 5px solid #ffd700;
+            width: 110px;
+            height: 110px;
+            border: 4px solid #ffd700;
             border-radius: 50%;
             background: conic-gradient(#8B4513 0deg 72deg, #b8860b 72deg 144deg, #5c2d0c 144deg 216deg, #8B4513 216deg 288deg, #b8860b 288deg 360deg);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.8);
             transition: transform 1.5s cubic-bezier(0.15, 0.9, 0.2, 1);
             position: relative;
+            margin-top: 4px;
         }
         .wheel-center {
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             background: #ffd700;
             border-radius: 50%;
             border: 2px solid #3d000c;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+            font-size: 12px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
         }
 
         .barrels-container {
             position: absolute;
-            bottom: 140px;
+            bottom: 135px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -147,8 +173,8 @@
         }
 
         .barrel {
-            width: 48px;
-            height: 66px;
+            width: 46px;
+            height: 62px;
             background: linear-gradient(135deg, #8B4513 0%, #5c2d0c 100%);
             border: 2px solid #ffd700;
             border-radius: 8px;
@@ -172,10 +198,10 @@
             background: #b8860b;
             box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
         }
-        .ring-top { top: 7px; }
-        .ring-bottom { bottom: 7px; }
+        .ring-top { top: 6px; }
+        .ring-bottom { bottom: 6px; }
         .barrel-content {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             color: #ffd700;
             text-shadow: 2px 2px 2px #000;
@@ -184,7 +210,7 @@
 
         .spin-btn-container {
             position: absolute;
-            bottom: 62px;
+            bottom: 58px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 15;
@@ -192,7 +218,7 @@
             width: 90%;
         }
         .spin-cost {
-            font-size: 10px;
+            font-size: 9px;
             color: #ffcccc;
             margin-top: 2px;
             text-shadow: 1px 1px 2px #000;
@@ -206,15 +232,15 @@
             background: rgba(15, 5, 8, 0.95);
             padding: 8px 10px;
             display: flex;
-            gap: 8px;
+            gap: 6px;
             z-index: 20;
             border-top: 1px solid rgba(255, 215, 0, 0.3);
             box-shadow: 0 -4px 15px rgba(0,0,0,0.8);
         }
         .bottom-action-bar button {
             flex: 1;
-            padding: 10px 4px;
-            font-size: 12px;
+            padding: 10px 2px;
+            font-size: 11px;
             font-weight: bold;
             border-radius: 8px;
             border: 1px solid #ffd700;
@@ -229,6 +255,14 @@
         .btn-buy-main {
             background: linear-gradient(135deg, #ffd700 0%, #daa520 100%);
             color: #3d000c;
+        }
+        .btn-withdraw-main {
+            background: linear-gradient(135deg, #ff8800 0%, #cc5500 100%);
+            color: #fff;
+            border-color: #ffaa33;
+        }
+        .hidden {
+            display: none !important;
         }
 
         .modal {
@@ -247,15 +281,15 @@
             padding: 20px;
         }
         .modal h2 {
-            font-size: 20px;
+            font-size: 18px;
             color: #ffd700;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
         }
         .modal p {
             font-size: 12px;
             max-width: 360px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             line-height: 1.4;
         }
         .btn {
@@ -263,7 +297,7 @@
             color: #3d000c;
             border: none;
             padding: 9px 18px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
             border-radius: 20px;
             cursor: pointer;
@@ -279,9 +313,6 @@
             opacity: 0.5;
             cursor: not-allowed;
             transform: none !important;
-        }
-        .hidden {
-            display: none !important;
         }
     </style>
 </head>
@@ -304,6 +335,13 @@
             <div class="wallet-action-text" id="wallet-status-text">Натисніть, щоб привязати гаманець</div>
         </div>
         <div class="crown">👑</div>
+        
+        <!-- Кнопки персонажей с подсказками -->
+        <div class="advisors-bar">
+            <button class="advisor-btn" onclick="buyAdvisorHint(1)">🧙‍♂️ Мудрець (0.001 TON)</button>
+            <button class="advisor-btn" onclick="buyAdvisorHint(2)">🛡️ Страж (0.001 TON)</button>
+        </div>
+
         <div class="wheel-box" id="wheel">
             <div class="wheel-center">🎯</div>
         </div>
@@ -317,8 +355,16 @@
     </div>
 
     <div class="bottom-action-bar">
-        <button class="btn-exchange-main" onclick="exchangePointsToTsars()">🔄 Обміняти</button>
+        <button class="btn-exchange-main" onclick="exchangePointsToTsars()">🔄 Обміняти (1000)</button>
         <button class="btn-buy-main" onclick="buyPointsWithTon()">💳 Купити бали</button>
+        <button class="btn-withdraw-main hidden" id="withdraw-btn" onclick="withdrawTsars()">💸 Вивести</button>
+    </div>
+
+    <!-- Модальное окно для подсказок персонажей -->
+    <div id="hint-modal" class="modal hidden">
+        <h2 id="hint-title">💡 Таємниця розкрита!</h2>
+        <p id="hint-text">Текст підказки...</p>
+        <button class="btn" onclick="closeHintModal()">Зрозуміло</button>
     </div>
 
     <div id="win-modal" class="modal hidden">
@@ -339,10 +385,11 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
+        let playerNickname = 'Игрок';
         const user = tg.initDataUnsafe?.user;
         if (user) {
-            const nickname = user.first_name + (user.last_name ? ' ' + user.last_name : '') || user.username || 'Игрок';
-            document.getElementById('player-nickname').innerText = nickname;
+            playerNickname = user.first_name + (user.last_name ? ' ' + user.last_name : '') || user.username || 'Игрок';
+            document.getElementById('player-nickname').innerText = playerNickname;
         }
 
         let points = 100;
@@ -357,6 +404,10 @@
         const SPIN_COST_POINTS = 10;
         const WIN_REWARD_POINTS = 20;
         const TOTAL_BARRELS = 5;
+        
+        const EXCHANGE_THRESHOLD = 1000; // Порог обмена балов
+        const EXCHANGE_RATE_REWARD = 1000; // Царей за обмен
+        const WITHDRAW_THRESHOLD = 2000; // Новый порог для вывода Царей
 
         const MY_WALLET_ADDRESS = "UQDXq1iAqu88tVRG62_k03kAXELu_1gzRBMye-VZoFRIRtWw";
 
@@ -390,15 +441,11 @@
             }
         }
 
-        async function exchangePointsToTsars() {
+        // Покупка подсказки от персонажей за 0.001 TON
+        async function buyAdvisorHint(advisorId) {
             initAudio();
-            if (points < 50) {
-                alert("Потрібно щонайменше 50 балів для обміну!");
-                return;
-            }
-
             if (!tonConnectUI.connected) {
-                alert("Будь ласка, підключіть гаманець для здійснення обміну!");
+                alert("Будь ласка, підключіть гаманець для консультації з радником!");
                 await tonConnectUI.openModal();
                 return;
             }
@@ -409,22 +456,50 @@
                     messages: [
                         {
                             address: MY_WALLET_ADDRESS, 
-                            amount: "1000000"
+                            amount: "1000000" // 0.001 TON
                         }
                     ]
                 };
 
                 await tonConnectUI.sendTransaction(transaction);
-                
-                points -= 50;
-                score += 20;
-                updateStats();
-                alert("Успішно обміняно! +20 Царів додано в скарбницю.");
+
+                // Выдаем подсказку после успешной оплаты
+                let title = "";
+                let text = "";
+
+                if (advisorId === 1) {
+                    title = "🧙‍♂️ Порада Мудреця";
+                    text = `Секрет обміну відкрито! Тобі потрібно назбирати рівно **${EXCHANGE_THRESHOLD} балів**, щоб обміняти їх на **${EXCHANGE_RATE_REWARD} Царів** у скарбниці. Збирай скарби у бочонках!`;
+                } else if (advisorId === 2) {
+                    title = "🛡️ Таємниця Стража";
+                    text = `Секрет виводу відкрито! Захист скарбниці вимагає накопичити щонайменше **${WITHDRAW_THRESHOLD} Царів**, перш ніж кнопка виводу через бота стане активною!`;
+                }
+
+                document.getElementById('hint-title').innerText = title;
+                document.getElementById('hint-text').innerHTML = text;
+                document.getElementById('hint-modal').classList.remove('hidden');
 
             } catch (error) {
                 console.error("Transaction cancelled or failed:", error);
-                alert("Обмін скасовано або сталася помилка транзакції в гаманці.");
+                alert("Покупку поради скасовано або сталася помилка в гаманці.");
             }
+        }
+
+        function closeHintModal() {
+            document.getElementById('hint-modal').classList.add('hidden');
+        }
+
+        function exchangePointsToTsars() {
+            initAudio();
+            if (points < EXCHANGE_THRESHOLD) {
+                alert(`Потрібно щонайменше ${EXCHANGE_THRESHOLD} балів для обміну! (У вас: ${points})`);
+                return;
+            }
+
+            points -= EXCHANGE_THRESHOLD;
+            score += EXCHANGE_RATE_REWARD;
+            updateStats();
+            alert(`Успішно обміняно ${EXCHANGE_THRESHOLD} балів! +${EXCHANGE_RATE_REWARD} Царів додано в скарбницю.`);
         }
 
         async function buyPointsWithTon() {
@@ -459,6 +534,28 @@
                 console.error("Transaction cancelled or failed:", error);
                 alert("Покупку скасовано або сталася помилка транзакції в гаманці.");
             }
+        }
+
+        function withdrawTsars() {
+            initAudio();
+            if (score < WITHDRAW_THRESHOLD) {
+                alert(`Мінімум для виводу — ${WITHDRAW_THRESHOLD} Царів!`);
+                return;
+            }
+
+            if (!tonConnectUI.connected) {
+                alert("Будь ласка, підключіть гаманець перед виводом!");
+                tonConnectUI.openModal();
+                return;
+            }
+
+            const walletAddress = tonConnectUI.wallet.account.address;
+
+            const messageText = `👑 Запит на вивод з гри ЦАРЬ\n\n👤 Гравець: ${playerNickname}\n💰 Сума: ${score} Царів\n💳 Гаманець: ${walletAddress}\n🎮 Гра: Царство`;
+            const encodedText = encodeURIComponent(messageText);
+            const botUrl = `https://t.me/tokenpist_bot?start=${encodedText}`;
+
+            tg.openTelegramLink(botUrl);
         }
 
         function initAudio() {
@@ -530,7 +627,6 @@
 
         function triggerWin() {
             gameActive = false;
-            // Награда за збор 10 алмазов: +50 балов и +10 Царей
             points += 50;
             score += 10;
             updateStats();
@@ -538,7 +634,7 @@
         }
 
         function continueGameAfterWin() {
-            diamondsFound = 0; // Сбрасываем счетчик алмазов для нового круга
+            diamondsFound = 0;
             updateStats();
             document.getElementById('win-modal').classList.add('hidden');
             gameActive = true;
@@ -547,7 +643,7 @@
 
         function triggerGameOver() {
             gameActive = false;
-            document.getElementById('gameover-modal').classList.add('hidden');
+            document.getElementById('gameover-modal').classList.remove('hidden');
         }
 
         window.onload = function() {
@@ -573,6 +669,14 @@
             document.getElementById('points').innerText = points;
             document.getElementById('score').innerText = score;
             document.getElementById('diamonds').innerText = diamondsFound;
+
+            // Кнопка виводу з'являється при досягненні 2000 Царів
+            const withdrawBtn = document.getElementById('withdraw-btn');
+            if (score >= WITHDRAW_THRESHOLD) {
+                withdrawBtn.classList.remove('hidden');
+            } else {
+                withdrawBtn.classList.add('hidden');
+            }
         }
 
         function setupNewRound() {
@@ -580,8 +684,6 @@
             container.innerHTML = '';
             
             winningBarrelIndex = Math.floor(Math.random() * TOTAL_BARRELS);
-            
-            // Збалансовано шанс: тепер алмаз випадає лише у 40% випадків (а не завжди), іноді бочонки пусті
             const luckChance = Math.random();
             const hasDiamondThisRound = luckChance < 0.4; 
 
@@ -589,7 +691,7 @@
                 if (hasDiamondThisRound) {
                     return i === winningBarrelIndex;
                 } else {
-                    return false; // Всі бочонки пусті у цьому раунді (додає азарту)
+                    return false;
                 }
             });
 
