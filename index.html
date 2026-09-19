@@ -335,7 +335,6 @@
         </div>
         <div class="crown">👑</div>
         
-        <!-- Кнопки персонажей с подсказками -->
         <div class="advisors-bar">
             <button class="advisor-btn" onclick="buyAdvisorHint(1)">🧙‍♂️ Мудрец (0.001 TON)</button>
             <button class="advisor-btn" onclick="buyAdvisorHint(2)">🛡️ Страж (0.001 TON)</button>
@@ -350,7 +349,7 @@
 
     <div class="spin-btn-container">
         <button class="btn" id="spin-btn" onclick="spinWheel()">Крутить Колесо (10 баллов)</button>
-        <div class="spin-cost">5 бочонков • Шанс найти сокровище</div>
+        <div class="spin-cost" id="streak-info">5 бочонков • Серия неудач: 0/10</div>
     </div>
 
     <div class="bottom-action-bar">
@@ -359,7 +358,6 @@
         <button class="btn-withdraw-main hidden" id="withdraw-btn" onclick="withdrawTsars()">💸 Вывести</button>
     </div>
 
-    <!-- Модальное окно для подсказок персонажей -->
     <div id="hint-modal" class="modal hidden">
         <h2 id="hint-title">💡 Тайна раскрыта!</h2>
         <p id="hint-text">Текст подсказки...</p>
@@ -370,6 +368,12 @@
         <h2>🎉 Великий Триумф! 🎉</h2>
         <p>Вы собрали все 10 алмазов! Награда: +50 баллов и +10 Царей. Продолжаем владычество!</p>
         <button class="btn" onclick="continueGameAfterWin()">Продолжить поход</button>
+    </div>
+
+    <div id="streak-reward-modal" class="modal hidden">
+        <h2>🔥 Царская Милость за Стойкость! 🔥</h2>
+        <p id="streak-reward-text">Вы стойко перенесли 10 неудач подряд! Казна жалует вам утешительный бонус: +30 баллов и +5 Царей!</p>
+        <button class="btn" onclick="closeStreakModal()">Принять щедрость</button>
     </div>
 
     <div id="gameover-modal" class="modal hidden">
@@ -394,6 +398,7 @@
         let points = 100;
         let score = 0;
         let diamondsFound = 0;
+        let consecutiveMisses = 0; // Счетчик серий неудач подряд
         let gameActive = true;
         let currentRotation = 0;
         let winningBarrelIndex = 0;
@@ -454,7 +459,7 @@
                     messages: [
                         {
                             address: MY_WALLET_ADDRESS, 
-                            amount: "1000000" // 0.001 TON
+                            amount: "1000000"
                         }
                     ]
                 };
@@ -484,6 +489,12 @@
 
         function closeHintModal() {
             document.getElementById('hint-modal').classList.add('hidden');
+        }
+
+        function closeStreakModal() {
+            document.getElementById('streak-reward-modal').classList.add('hidden');
+            gameActive = true;
+            setupNewRound();
         }
 
         function exchangePointsToTsars() {
@@ -547,7 +558,6 @@
             }
 
             const walletAddress = tonConnectUI.wallet.account.address;
-
             const messageText = `👑 Запрос на вывод из игры ЦАРЬ\n\n👤 Игрок: ${playerNickname}\n💰 Сумма: ${score} Царей\n💳 Кошелек: ${walletAddress}\n🎮 Игра: Царство`;
             const encodedText = encodeURIComponent(messageText);
             const botUrl = `https://t.me/tokenpist_bot?start=${encodedText}`;
@@ -601,25 +611,49 @@
                     barrelEl.style.background = 'linear-gradient(135deg, #005c8a 0%, #002b3d 100%)';
                     points += WIN_REWARD_POINTS;
                     diamondsFound++;
+                    consecutiveMisses = 0; // Сбрасываем серию проигрышей при победе
                     
                     updateStats();
+                    updateStreakDisplay();
 
                     if (diamondsFound >= 10) {
                         triggerWin();
+                    } else {
+                        setTimeout(() => {
+                            if (gameActive) setupNewRound();
+                        }, 1500);
                     }
                 } else {
                     contentDiv.innerHTML = '❌';
                     barrelEl.style.background = 'linear-gradient(135deg, #8a0000 0%, #3d0000 100%)';
+                    consecutiveMisses++;
                     updateStats();
-                }
+                    updateStreakDisplay();
 
-                setTimeout(() => {
-                    if (gameActive && diamondsFound < 10) {
-                        setupNewRound();
+                    if (consecutiveMisses >= 10) {
+                        triggerStreakReward();
+                    } else {
+                        setTimeout(() => {
+                            if (gameActive) setupNewRound();
+                        }, 1500);
                     }
-                }, 1500);
-
+                }
             }, 400);
+        }
+
+        function updateStreakDisplay() {
+            const streakInfo = document.getElementById('streak-info');
+            streakInfo.innerText = `5 бочонков • Серия неудач: ${consecutiveMisses}/10`;
+        }
+
+        function triggerStreakReward() {
+            gameActive = false;
+            points += 30; // Начисляем баллы
+            score += 5;   // Начисляем царей
+            consecutiveMisses = 0; // Сбрасываем счетчик
+            updateStats();
+            updateStreakDisplay();
+            document.getElementById('streak-reward-modal').classList.remove('hidden');
         }
 
         function triggerWin() {
@@ -650,10 +684,13 @@
         function startGame() {
             document.getElementById('win-modal').classList.add('hidden');
             document.getElementById('gameover-modal').classList.add('hidden');
+            document.getElementById('streak-reward-modal').classList.add('hidden');
             points = 100;
             score = 0;
             diamondsFound = 0;
+            consecutiveMisses = 0;
             updateStats();
+            updateStreakDisplay();
             gameActive = true;
             setupNewRound();
         }
