@@ -110,7 +110,6 @@
             50% { transform: scale(1.08); }
         }
 
-        /* Кнопки персонажей-подсказок под коронкой */
         .advisors-bar {
             display: flex;
             gap: 6px;
@@ -332,13 +331,13 @@
     <div class="player-crown-stage">
         <div class="player-info-box" onclick="openWalletModal()">
             <div class="player-name" id="player-nickname">Игрок</div>
-            <div class="wallet-action-text" id="wallet-status-text">Натисніть, щоб привязати гаманець</div>
+            <div class="wallet-action-text" id="wallet-status-text">Нажмите, чтобы привязать кошелек</div>
         </div>
         <div class="crown">👑</div>
         
         <!-- Кнопки персонажей с подсказками -->
         <div class="advisors-bar">
-            <button class="advisor-btn" onclick="buyAdvisorHint(1)">🧙‍♂️ Мудрець (0.001 TON)</button>
+            <button class="advisor-btn" onclick="buyAdvisorHint(1)">🧙‍♂️ Мудрец (0.001 TON)</button>
             <button class="advisor-btn" onclick="buyAdvisorHint(2)">🛡️ Страж (0.001 TON)</button>
         </div>
 
@@ -355,22 +354,22 @@
     </div>
 
     <div class="bottom-action-bar">
-        <button class="btn-exchange-main" onclick="exchangePointsToTsars()">🔄 Обміняти (1000)</button>
-        <button class="btn-buy-main" onclick="buyPointsWithTon()">💳 Купити бали</button>
-        <button class="btn-withdraw-main hidden" id="withdraw-btn" onclick="withdrawTsars()">💸 Вивести</button>
+        <button class="btn-exchange-main" onclick="exchangePointsToTsars()">🔄 Обменять (1000)</button>
+        <button class="btn-buy-main" onclick="buyPointsWithTon()">💳 Купить баллы</button>
+        <button class="btn-withdraw-main hidden" id="withdraw-btn" onclick="withdrawTsars()">💸 Вывести</button>
     </div>
 
     <!-- Модальное окно для подсказок персонажей -->
     <div id="hint-modal" class="modal hidden">
-        <h2 id="hint-title">💡 Таємниця розкрита!</h2>
-        <p id="hint-text">Текст підказки...</p>
-        <button class="btn" onclick="closeHintModal()">Зрозуміло</button>
+        <h2 id="hint-title">💡 Тайна раскрыта!</h2>
+        <p id="hint-text">Текст подсказки...</p>
+        <button class="btn" onclick="closeHintModal()">Понятно</button>
     </div>
 
     <div id="win-modal" class="modal hidden">
-        <h2>🎉 Великий Тріумф! 🎉</h2>
-        <p>Ви зібрали всі 10 алмазів! Нагорода: +50 балів та +10 Царів. Продовжуємо володарювання!</p>
-        <button class="btn" onclick="continueGameAfterWin()">Продовжити похід</button>
+        <h2>🎉 Великий Триумф! 🎉</h2>
+        <p>Вы собрали все 10 алмазов! Награда: +50 баллов и +10 Царей. Продолжаем владычество!</p>
+        <button class="btn" onclick="continueGameAfterWin()">Продолжить поход</button>
     </div>
 
     <div id="gameover-modal" class="modal hidden">
@@ -405,9 +404,9 @@
         const WIN_REWARD_POINTS = 20;
         const TOTAL_BARRELS = 5;
         
-        const EXCHANGE_THRESHOLD = 1000; // Порог обмена балов
-        const EXCHANGE_RATE_REWARD = 1000; // Царей за обмен
-        const WITHDRAW_THRESHOLD = 2000; // Новый порог для вывода Царей
+        const EXCHANGE_THRESHOLD = 1000; 
+        const EXCHANGE_RATE_REWARD = 1000; 
+        const WITHDRAW_THRESHOLD = 2000; 
 
         const MY_WALLET_ADDRESS = "UQDXq1iAqu88tVRG62_k03kAXELu_1gzRBMye-VZoFRIRtWw";
 
@@ -420,10 +419,10 @@
             if (wallet) {
                 const address = wallet.account.address;
                 const shortAddr = address.slice(0, 4) + '...' + address.slice(-4);
-                statusText.innerText = 'Гаманець: ' + shortAddr + ' (Натисніть для відключення)';
+                statusText.innerText = 'Кошелек: ' + shortAddr + ' (Нажмите для отключения)';
                 statusText.classList.add('connected');
             } else {
-                statusText.innerText = 'Натисніть, щоб привязати гаманець';
+                statusText.innerText = 'Нажмите, чтобы привязать кошелек';
                 statusText.classList.remove('connected');
             }
         });
@@ -441,11 +440,10 @@
             }
         }
 
-        // Покупка подсказки от персонажей за 0.001 TON
         async function buyAdvisorHint(advisorId) {
             initAudio();
             if (!tonConnectUI.connected) {
-                alert("Будь ласка, підключіть гаманець для консультації з радником!");
+                alert("Пожалуйста, подключите кошелек для консультации с советником!");
                 await tonConnectUI.openModal();
                 return;
             }
@@ -463,16 +461,15 @@
 
                 await tonConnectUI.sendTransaction(transaction);
 
-                // Выдаем подсказку после успешной оплаты
                 let title = "";
                 let text = "";
 
                 if (advisorId === 1) {
-                    title = "🧙‍♂️ Порада Мудреця";
-                    text = `Секрет обміну відкрито! Тобі потрібно назбирати рівно **${EXCHANGE_THRESHOLD} балів**, щоб обміняти їх на **${EXCHANGE_RATE_REWARD} Царів** у скарбниці. Збирай скарби у бочонках!`;
+                    title = "🧙‍♂️ Совет Мудреца";
+                    text = `Секрет обмена открыт! Тебе нужно набрать ровно **${EXCHANGE_THRESHOLD} баллов**, чтобы обменять их на **${EXCHANGE_RATE_REWARD} Царей** в сокровищнице. Собирай сокровища в бочонках!`;
                 } else if (advisorId === 2) {
-                    title = "🛡️ Таємниця Стража";
-                    text = `Секрет виводу відкрито! Захист скарбниці вимагає накопичити щонайменше **${WITHDRAW_THRESHOLD} Царів**, перш ніж кнопка виводу через бота стане активною!`;
+                    title = "🛡️ Тайна Стража";
+                    text = `Секрет вывода открыт! Защита сокровищницы требует накопить не менее **${WITHDRAW_THRESHOLD} Царей**, прежде чем кнопка вывода через бота станет активной!`;
                 }
 
                 document.getElementById('hint-title').innerText = title;
@@ -481,7 +478,7 @@
 
             } catch (error) {
                 console.error("Transaction cancelled or failed:", error);
-                alert("Покупку поради скасовано або сталася помилка в гаманці.");
+                alert("Покупка совета отменена или произошла ошибка в кошельке.");
             }
         }
 
@@ -492,20 +489,20 @@
         function exchangePointsToTsars() {
             initAudio();
             if (points < EXCHANGE_THRESHOLD) {
-                alert(`Потрібно щонайменше ${EXCHANGE_THRESHOLD} балів для обміну! (У вас: ${points})`);
+                alert(`Требуется не менее ${EXCHANGE_THRESHOLD} баллов для обмена! (У вас: ${points})`);
                 return;
             }
 
             points -= EXCHANGE_THRESHOLD;
             score += EXCHANGE_RATE_REWARD;
             updateStats();
-            alert(`Успішно обміняно ${EXCHANGE_THRESHOLD} балів! +${EXCHANGE_RATE_REWARD} Царів додано в скарбницю.`);
+            alert(`Успешно обменяно ${EXCHANGE_THRESHOLD} баллов! +${EXCHANGE_RATE_REWARD} Царей добавлено в сокровищницу.`);
         }
 
         async function buyPointsWithTon() {
             initAudio();
             if (!tonConnectUI.connected) {
-                alert("Будь ласка, підключіть гаманець!");
+                alert("Пожалуйста, подключите кошелек!");
                 await tonConnectUI.openModal();
                 return;
             }
@@ -528,30 +525,30 @@
                 document.getElementById('gameover-modal').classList.add('hidden');
                 updateStats();
                 setupNewRound();
-                alert("Успішно! +50 балів зараховано на ваш рахунок.");
+                alert("Успешно! +50 баллов зачислено на ваш счет.");
 
             } catch (error) {
                 console.error("Transaction cancelled or failed:", error);
-                alert("Покупку скасовано або сталася помилка транзакції в гаманці.");
+                alert("Покупка отменена или произошла ошибка транзакции в кошельке.");
             }
         }
 
         function withdrawTsars() {
             initAudio();
             if (score < WITHDRAW_THRESHOLD) {
-                alert(`Мінімум для виводу — ${WITHDRAW_THRESHOLD} Царів!`);
+                alert(`Минимум для вывода — ${WITHDRAW_THRESHOLD} Царей!`);
                 return;
             }
 
             if (!tonConnectUI.connected) {
-                alert("Будь ласка, підключіть гаманець перед виводом!");
+                alert("Пожалуйста, подключите кошелек перед выводом!");
                 tonConnectUI.openModal();
                 return;
             }
 
             const walletAddress = tonConnectUI.wallet.account.address;
 
-            const messageText = `👑 Запит на вивод з гри ЦАРЬ\n\n👤 Гравець: ${playerNickname}\n💰 Сума: ${score} Царів\n💳 Гаманець: ${walletAddress}\n🎮 Гра: Царство`;
+            const messageText = `👑 Запрос на вывод из игры ЦАРЬ\n\n👤 Игрок: ${playerNickname}\n💰 Сумма: ${score} Царей\n💳 Кошелек: ${walletAddress}\n🎮 Игра: Царство`;
             const encodedText = encodeURIComponent(messageText);
             const botUrl = `https://t.me/tokenpist_bot?start=${encodedText}`;
 
@@ -670,7 +667,6 @@
             document.getElementById('score').innerText = score;
             document.getElementById('diamonds').innerText = diamondsFound;
 
-            // Кнопка виводу з'являється при досягненні 2000 Царів
             const withdrawBtn = document.getElementById('withdraw-btn');
             if (score >= WITHDRAW_THRESHOLD) {
                 withdrawBtn.classList.remove('hidden');
